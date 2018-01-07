@@ -1,4 +1,5 @@
 #include "intel_hex.h"
+#include "e2prom.h"
 
 #define debug(X) Serial.print(X)
 #define debug2(X,Y) Serial.print(X,Y)
@@ -108,6 +109,8 @@ const uint8_t blink_hex[] PROGMEM= {":100000000C945E000C9470000C9470000C947000C2
 :0A0520000E940000BFCFF894FFCF47\
 :00000001FF"};
 
+#ifdef _DEBUG_
+
 void IntelHex::parse_intel_hex_from_flash(){
 
   Serial.begin(9600);
@@ -152,4 +155,33 @@ void IntelHex::parse_intel_hex_from_flash(){
     if(0 == page_size) break ; //end
   }
   
+}
+#endif // _DEBUG_
+
+void IntelHex::write_to_eeprom_i2c(uint8_t eeprom_i2c_address=0x50, uint16_t destination_start_byte){
+    E2PROM e (eeprom_i2c_address); 
+    uint16_t total_size = sizeof(blink_hex) / sizeof(blink_hex[0]);
+    Serial.begin(9600);
+    Serial.print("Total example intel hex file size: "); Serial.print(total_size); Serial.println(" bytes.");
+    Serial.println(">>> start i2c write");
+
+    uint8_t step_in_file = hex_file_line_length;
+    uint8_t current_page = 0;
+    for(uint16_t position_in_file=0; position_in_file<total_size; position_in_file+=step_in_file, ++current_page){
+      uint8_t page_size = hex2int(&blink_hex[position_in_file],1,2);
+      uint8_t payload_position_in_page = 10;
+        if(page_size*2+metadata_length < hex_file_line_length) step_in_file = page_size*2 + metadata_length;
+          
+          char buffer[E2PROM::eeprom_page_size]; memset(buffer, 0, E2PROM::eeprom_page_size);
+          
+          for(uint8_t j = 0;j<E2PROM::eeprom_page_size;++j){
+            buffer[j] = pgm_read_byte(&blink_hex[position_in_file+payload_position_in_page+j]);
+            Serial.print(buffer[j]);
+            e.writeByte(current_page*E2PROM::eeprom_page_size+j, buffer[j]);
+           
+          }
+          Serial.println("");
+        
+    }
+    Serial.println(">>> end i2c write");
 }

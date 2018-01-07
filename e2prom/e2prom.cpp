@@ -30,16 +30,19 @@ E2PROM::E2PROM(uint8_t ownAddress, uint32_t speed){
 
 uint8_t E2PROM::readByte(uint16_t registerAddress)
 {
-    uint8_t data=0;
-    
-    Wire.beginTransmission(ownAddress_); 
-    Wire.write(static_cast<uint8_t>(registerAddress>>8));
-    Wire.write(static_cast<uint8_t>(registerAddress));
-    Wire.endTransmission();
+    uint8_t data=0x55;
+
+    TEEepromResult result = TEEepromResult_Ok;
+    do{
+      Wire.beginTransmission(ownAddress_); 
+      Wire.write(static_cast<uint8_t>(registerAddress>>8));
+      Wire.write(static_cast<uint8_t>(registerAddress));
+      result = Wire.endTransmission();
+    } while (TEEepromResult_Ok != result);
     
     //Ask the I2C device for data
     Wire.requestFrom(ownAddress_, static_cast<uint8_t>(1));
-    //while(!Wire.available());
+    while(!Wire.available());
     if(Wire.available()){
         data = Wire.read();
     }
@@ -48,58 +51,66 @@ uint8_t E2PROM::readByte(uint16_t registerAddress)
 
 void E2PROM::dump(uint8_t columnCount){
     Serial.begin(9600);
-    Serial.println("----------------------------------------");
-    uint8_t buf [30]; memset (buf, 0, sizeof(buf));
-    for (auto i = 0; i < 20; i++){
-        Serial.print (readByte(i)); Serial.print (' ');
+    for (auto i = 0; i < 4*1024; i++){
+        if(0 == i%32) Serial.println("");
+        Serial.print (static_cast<char>(readByte(i)));
     }
     
     Serial.print('\n');
 }
 
-void E2PROM::writeByte(uint16_t registerAddress, uint8_t data){
-    //Send the register address to be read.
+TEEepromResult E2PROM::writeByte(uint16_t registerAddress, uint8_t data){
+    TEEepromResult result = TEEepromResult_Ok;
     Wire.beginTransmission(ownAddress_);
-    
-    //Send the Register Address
     Wire.write(static_cast<uint8_t>(registerAddress>>8));
     Wire.write(static_cast<uint8_t>(registerAddress));
-    
     Wire.write(data); 
-    //End the communication sequence.
-    Wire.endTransmission();
+    result = Wire.endTransmission();
+    delay(5);
+    return result;
 }
 
 TEEepromResult  E2PROM::writePage(uint16_t registerAddress, uint8_t* buffer, uint8_t byteCount){
     TEEepromResult result = TEEepromResult_Ok;
-    if(byteCount > 32) result = TEEepromResult_BufferGreaterAsPageSize;
-    else {
-        Wire.beginTransmission(ownAddress_);
-        Wire.write(static_cast<uint8_t>(registerAddress>>8));
-        Wire.write(static_cast<uint8_t>(registerAddress));
-        for(auto i = 0; i<byteCount; i++){
-            Wire.write(static_cast<char>(buffer[i]));
+    
+        if(byteCount > 32) result = TEEepromResult_BufferGreaterAsPageSize;
+        else {
+            
+              Wire.beginTransmission(ownAddress_);
+              Wire.write(static_cast<uint8_t>(registerAddress>>8));
+              Wire.write(static_cast<uint8_t>(registerAddress));
+              for(auto i = 0; i<byteCount; i++){
+                  Wire.write(buffer[i]);
+                  delay(5);
+              }
+              result = Wire.endTransmission();
+              delay(5);
+            
         }
-        Wire.endTransmission();
-    }
+    Wire.end();
     return result;
 }
 
 TEEepromResult  E2PROM::readPage (uint16_t registerAddress, uint8_t* buffer, uint8_t byteCount){
     TEEepromResult result = TEEepromResult_Ok;
-    if(byteCount > 32) result = TEEepromResult_BufferGreaterAsPageSize;
-    else {
-        Wire.beginTransmission(ownAddress_); 
-        Wire.write(static_cast<uint8_t>(registerAddress>>8));
-        Wire.write(static_cast<uint8_t>(registerAddress));
-        Wire.endTransmission();
-        
-        Wire.requestFrom(ownAddress_, byteCount); 
-        
-        for(auto i = 0; i<byteCount; i++){
-            buffer[i++] = Wire.read();
-        }
-    }
-    Wire.end();
+
+   
+      if(byteCount > 32) result = TEEepromResult_BufferGreaterAsPageSize;
+      else {
+          do{
+              Wire.beginTransmission(ownAddress_); 
+              Wire.write(static_cast<uint8_t>(registerAddress>>8));
+              Wire.write(static_cast<uint8_t>(registerAddress));
+              result =  Wire.endTransmission();
+              
+              Wire.requestFrom(ownAddress_, byteCount); 
+           } while (TEEepromResult_Ok != result);
+          
+          for(auto i = 0; i<byteCount; i++){
+              buffer[i++] = Wire.read();
+          }
+      }
+      Wire.end();
+   
     return result;
 }

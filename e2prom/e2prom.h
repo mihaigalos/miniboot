@@ -40,7 +40,7 @@ class E2PROM{
     
     
     public: 
-    static const uint8_t eeprom_page_size = 32;
+    static const uint8_t eeprom_page_size = 34; //nibbles. payload : 32, CRC: 2 nibbles
     E2PROM(uint8_t ownAddress, uint32_t speed=CLOCK_SPEED_400KHZ);
     
     uint8_t readByte(uint16_t registerAddress);

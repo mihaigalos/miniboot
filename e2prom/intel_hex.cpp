@@ -162,26 +162,30 @@ void IntelHex::write_to_eeprom_i2c(uint8_t eeprom_i2c_address=0x50, uint16_t des
     E2PROM e (eeprom_i2c_address); 
     uint16_t total_size = sizeof(blink_hex) / sizeof(blink_hex[0]);
     Serial.begin(9600);
-    Serial.print("Total example intel hex file size: "); Serial.print(total_size); Serial.println(" bytes.");
+    Serial.print("Total example intel hex file raw size: "); Serial.print(total_size); Serial.println(" bytes.");
     Serial.println(">>> start i2c write");
 
     uint8_t step_in_file = hex_file_line_length;
     uint8_t current_page = 0;
-    for(uint16_t position_in_file=0; position_in_file<total_size; position_in_file+=step_in_file, ++current_page){
+    
+    for(uint16_t position_in_file=0; position_in_file<total_size; position_in_file+=step_in_file, ++current_page)
+    {
       uint8_t page_size = hex2int(&blink_hex[position_in_file],1,2);
-      uint8_t payload_position_in_page = 10;
+      uint8_t payload_position_in_page = 9;
+      uint8_t crc_position_in_page = 41;
+      
         if(page_size*2+metadata_length < hex_file_line_length) step_in_file = page_size*2 + metadata_length;
           
           char buffer[E2PROM::eeprom_page_size]; memset(buffer, 0, E2PROM::eeprom_page_size);
           
-          for(uint8_t j = 0;j<E2PROM::eeprom_page_size;++j){
+          for(uint8_t j = 0;j<E2PROM::eeprom_page_size-1;++j){
             buffer[j] = pgm_read_byte(&blink_hex[position_in_file+payload_position_in_page+j]);
-            Serial.print(buffer[j]);
-            e.writeByte(current_page*E2PROM::eeprom_page_size+j, buffer[j]);
-           
+            //e.writeByte(current_page*E2PROM::eeprom_page_size+j, buffer[j]);
           }
-          Serial.println("");
-        
+          uint8_t crc_hi_nibble = pgm_read_byte(&blink_hex[position_in_file+crc_position_in_page]);
+          e.writeByte(current_page*E2PROM::eeprom_page_size+E2PROM::eeprom_page_size, crc_hi_nibble);
+          uint8_t crc_lo_nibble = pgm_read_byte(&blink_hex[position_in_file+crc_position_in_page+1]);
+          e.writeByte(current_page*E2PROM::eeprom_page_size+E2PROM::eeprom_page_size, crc_lo_nibble);
     }
     Serial.println(">>> end i2c write");
 }

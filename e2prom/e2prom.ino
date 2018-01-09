@@ -26,13 +26,15 @@ E2PROM e(OWNADDRESS);
 IntelHex ihex;
 
 void setup() {
-    ihex.write_to_eeprom_i2c();
-    e.dump(43);
-    delay(100);
+    
+    //e.dump(43);
     //uint8_t buffer[] = {"AAA!"};
     //e.writePage(10, &buffer[0], 5);
+      //e.dump();
+      ihex.parse_intel_hex_from_flash();
 }
 
 void loop() {
+  //ihex.write_to_eeprom_i2c();
 
 }

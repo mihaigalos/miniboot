@@ -49,10 +49,10 @@ uint8_t E2PROM::readByte(uint16_t registerAddress)
     return data;
 }
 
-void E2PROM::dump(uint8_t columnCount){
+void E2PROM::dump(int8_t columnCount){
     Serial.begin(9600);
     for (auto i = 0; i < 4*1024; i++){
-        if(0 == i%E2PROM::eeprom_page_size) Serial.println("");
+        if(columnCount>0 && 0 == i%columnCount) Serial.println("");
         Serial.print (static_cast<char>(readByte(i)));
     }
     

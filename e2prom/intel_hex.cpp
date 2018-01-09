@@ -158,7 +158,7 @@ void IntelHex::parse_intel_hex_from_flash(){
 }
 #endif // _DEBUG_
 
-void IntelHex::write_to_eeprom_i2c(uint8_t eeprom_i2c_address=0x50, uint16_t destination_start_byte){
+void IntelHex::write_to_eeprom_i2c_old(uint8_t eeprom_i2c_address=0x50, uint16_t destination_start_byte){
     E2PROM e (eeprom_i2c_address); 
     uint16_t total_size = sizeof(blink_hex) / sizeof(blink_hex[0]);
     Serial.begin(9600);
@@ -189,3 +189,20 @@ void IntelHex::write_to_eeprom_i2c(uint8_t eeprom_i2c_address=0x50, uint16_t des
     }
     Serial.println(">>> end i2c write");
 }
+
+void IntelHex::write_to_eeprom_i2c(uint8_t eeprom_i2c_address=0x50, uint16_t destination_start_byte){
+  Serial.begin(600);
+  Serial.println("Ready.");
+  E2PROM e (eeprom_i2c_address); 
+
+  uint16_t pos = 0;
+  do{
+    if (Serial.available() > 0) {
+      char incomingByte = Serial.read(); // read the incoming byte:
+      //Serial.println(incomingByte);
+      e.writeByte(pos++, incomingByte);
+    }
+  
+  }while(1);
+}
+

@@ -40,12 +40,12 @@ class E2PROM{
     
     
     public: 
-    static const uint8_t eeprom_page_size = 34; //nibbles. payload : 32, CRC: 2 nibbles
+    static const uint8_t eeprom_page_size = 16;
     E2PROM(uint8_t ownAddress, uint32_t speed=CLOCK_SPEED_400KHZ);
     
     uint8_t readByte(uint16_t registerAddress);
     TEEepromResult  writeByte(uint16_t registerAddress, uint8_t data);
     TEEepromResult  writePage(uint16_t registerAddress, uint8_t* buffer, uint8_t byteCount);
     TEEepromResult  readPage (uint16_t registerAddress, uint8_t* buffer, uint8_t byteCount);
-    void dump(uint8_t columnCount = 8);
+    void dump(int8_t columnCount  =-1);
 };

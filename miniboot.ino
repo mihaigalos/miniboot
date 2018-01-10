@@ -23,8 +23,8 @@ void writeToPageBuffer(uint16_t data, uint16_t address){
 static inline void writeFlashFromI2C(uint8_t i2c_address){
   uint16_t start_address = getDataStartAddressInSource(i2c_address);
   uint16_t length = getDataLength(i2c_address);
-  uint16_t data_byte = getWordFromSource(i2c_address, start_address);
   uint16_t destination_address = 0;
+  
   for(uint16_t i = start_address; i<length; ++i,destination_address+=2){
     uint16_t payload = getWordFromSource(i2c_address, i);
     writeToPageBuffer(payload, destination_address);
@@ -37,6 +37,6 @@ static inline void writeFlashFromI2C(uint8_t i2c_address){
 int main(){
   init();
   eraseFlash();
-  writeFlashFromI2C(SOURCE_I2C_ADDRESS_FOR_PROGRAM_TO_WRITE);
+  writeFlashFromI2C(source_i2c_address_for_program);
   return 0;
 }

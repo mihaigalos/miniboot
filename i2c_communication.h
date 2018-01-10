@@ -1,31 +1,19 @@
 #pragma once
 
-#include <Wire.h>
-
-enum I2CTransferStatus{
-  I2CTransferStatus_Ok,
-  I2CTransferStatus_BufferGreaterAsPageSize,
-  I2CTransferStatus_NackOnAddressTransmit,
-  I2CTransferStatus_NackOnDataTransmit,
-  I2CTransferStatus_OtherError
-};
+#include "I2C-master-lib/i2c_master.h"
 
 uint8_t readByte(uint8_t source_address, uint16_t register_address)
 {
   uint8_t data=0xFF;
-
-  I2CTransferStatus result = I2CTransferStatus_Ok;
+  source_address=source_address<<1 | 0x01;
+  i2c_start(source_address); 
+  i2c_write(register_address>>8);
+  i2c_write(register_address);
+  i2c_stop();
   
-  Wire.beginTransmission(source_address); 
-  Wire.write(static_cast<uint8_t>(register_address>>8));
-  Wire.write(static_cast<uint8_t>(register_address));
-  result = Wire.endTransmission();
+  i2c_start(source_address);
+  data = i2c_read_ack();
   
-  Wire.requestFrom(source_address, static_cast<uint8_t>(1));
-  while(!Wire.available());
-  if(Wire.available()){
-    data = Wire.read();
-  }
   return data;
 }
 

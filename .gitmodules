@@ -1,0 +1,3 @@
+[submodule "I2C-master-lib"]
+	path = I2C-master-lib
+	url = https://github.com/g4lvanix/I2C-master-lib.git

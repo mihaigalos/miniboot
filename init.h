@@ -1,5 +1,6 @@
 #pragma once
 
+#include <avr/wdt.h>
 #include "io.h"
 
 static void initIO(){

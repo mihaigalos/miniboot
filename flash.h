@@ -9,6 +9,7 @@ static inline void eraseFlash() {
     boot_page_erase(ptr);
     boot_spm_busy_wait();
   }
+  wdt_reset();
 }
 
 static inline void writeWordToPageBuffer(uint16_t data, uint16_t address) {

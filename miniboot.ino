@@ -1,6 +1,3 @@
-
-#include <Wire.h> // TODO: use a non-arduino optimized I2C library
-
 #include "init.h"
 #include "flash.h"
 #include "i2c_communication.h"
@@ -40,7 +37,6 @@ static inline void writeFlashFromI2C(uint8_t i2c_address){
 int main(){
   init();
   eraseFlash();
-  wdt_reset();
   writeFlashFromI2C(SOURCE_I2C_ADDRESS_FOR_PROGRAM_TO_WRITE);
   return 0;
 }

@@ -1,3 +1,4 @@
+#include "bootloader.h"
 #include "init.h"
 #include "flash.h"
 #include "i2c_communication.h"

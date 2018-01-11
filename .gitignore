@@ -1,2 +1,4 @@
 *.hex
 *.tmp
+*.map
+*.elf

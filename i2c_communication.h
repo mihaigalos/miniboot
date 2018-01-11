@@ -21,4 +21,5 @@ static inline uint16_t getWordFromSource(uint8_t i2c_address, uint16_t data_addr
   uint16_t result = 0xFFFF;
   result |= readByte(i2c_address, data_address);
   result |= (static_cast<uint16_t>(readByte(i2c_address, data_address)))<<8;
+  return result;
 }

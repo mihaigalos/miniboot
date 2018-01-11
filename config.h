@@ -1,6 +1,5 @@
 #pragma once
 
-#define LED_PORT_NAME D
-#define LED_PIN 1
+#define LED_PORT_NAME B
+#define LED_PIN 0
 static constexpr uint8_t source_i2c_address_for_program = 0x50; // default address for CAT24M01 I2C EEPROM
-

@@ -20,7 +20,7 @@ SRC =	$(TARGET).c \
 COMPILER = avr-g++
 COPY = avr-objcopy
 DFU = dfu-programmer
-LDFLAGS = -Wl,--relax,--section-start=.text=$(BOOTLOADER_START_ADDRESS),--gc-sections,-Map=main.map
+LDFLAGS = -Wl,--relax,--section-start=.text=$(BOOTLOADER_START_ADDRESS),--gc-sections,-Map=$(TARGET).map
 
 # Which chip to program for
 CHIP = atmega328p
@@ -29,7 +29,7 @@ CHIP = atmega328p
 FRQ = 8000000
 DEFS = -Wp,-DF_CPU=$(FRQ)UL 
 LIBS = -lm
-OPT = s #s = size, 0 = none, 3 = maximum
+OPT = s #Optimizations s = size, 0 = none, 3 = maximum
 STD = gnu++11
 
 version:
@@ -67,17 +67,19 @@ build-pedantic: version bootloader.h
 	@echo
 	@echo
 
-size:
+info:
 	@echo Size of binary hexfile. Use the "data" size to calculate the bootloader address:
 	@avr-size $(TARGET).hex
+	@echo
+	@echo Memory map written to $(TARGET).map
 clean:
 	@echo =====Cleaning=====
-	rm -f $(TARGET).elf $(TARGET).hex bootloader.h
+	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).map bootloader.h
 	@echo
 
-rebuild: clean build size
+rebuild: clean build info
 rebuild-pedantic: clean build-pedantic
-default: build size
-all: build size
+default: build info
+all: build info
 
 

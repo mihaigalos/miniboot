@@ -1,3 +1,7 @@
+//
+//  Fuses :     Ext: 0xFF, Hi: 0xD9, Lo: 0xE2
+//
+
 #include "bootloader.h"
 #include "init.h"
 #include "flash.h"

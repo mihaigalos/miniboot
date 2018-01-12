@@ -12,6 +12,7 @@ static void disableWatchdog(){
   MCUSR=0;
   WDTCSR|= (1<<WDCE) | (1<<WDE);
   WDTCSR=0;
+  asm("cli");
 }
 
 static void init()

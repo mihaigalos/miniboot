@@ -67,7 +67,7 @@ CINCS =
 #    -adhlns...: create assembler listing
 CFLAGS = -g$(DEBUG)
 CFLAGS += $(CDEFS) $(CINCS)
-CFLAGS += -O$(OPT)
+CFLAGS += -O$(OPT) -pedantic
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 CFLAGS += -Wall -Wstrict-prototypes
 CFLAGS += -Wa,-adhlns=$(<:.c=.lst)

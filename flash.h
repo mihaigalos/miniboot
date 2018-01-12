@@ -3,20 +3,35 @@
 #include <avr/boot.h>
 #include <avr/wdt.h>
 
-static inline void eraseFlash() {
+#include "bootloader.h"
+
+static inline void eraseApplication() {
   uint16_t ptr = BOOTLOADER_START_ADDRESS;
   do {
     ptr -= SPM_PAGESIZE;
     boot_page_erase(ptr);
     boot_spm_busy_wait();
-  }while (--ptr);
+  }while (ptr);
   wdt_reset();
 }
 
-static inline void writeWordToPageBuffer(uint16_t address, uint16_t data) {
-  boot_page_fill(address, data);
+static inline void erasePage(uint16_t address){
+  boot_page_erase(address);
+  boot_spm_busy_wait();
+}
+
+static inline void writeToPageBuffer(uint16_t address, uint8_t * data) {
+  erasePage(address);
+  for (uint8_t i=0; i<SPM_PAGESIZE; i+=2)
+  {
+    uint16_t w = *data++;
+    w += (*data++) << 8;
+    boot_page_fill (address + i, w);
+  }
 }
 
 static inline void writePageBufferToFlash(uint16_t address) {
-  boot_page_write_safe(address);
+  boot_page_write(address);
+  boot_spm_busy_wait();
+  boot_rww_enable ();
 }

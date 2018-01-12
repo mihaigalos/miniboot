@@ -12,34 +12,49 @@ static inline uint16_t getDataLength(uint8_t i2c_address){
   return 4*1024;
 }
 
-void writeToPageBuffer(uint16_t address, uint16_t data){
-  if (RESET_VECTOR == address) {
-    data = jmp_instruction;
-  } else if (RESET_VECTOR_ARGUMENT_ADDRESS == address) {
-    data = (BOOTLOADER_START_ADDRESS/2);
-  }
-  writeWordToPageBuffer(address, data);
+void adjustAddresses(uint16_t address, uint8_t * data){
+  /*if (0 == address) {
+    data[RESET_VECTOR] = static_cast<uint8_t>(jmp_instruction>>8);
+    data[RESET_VECTOR] = static_cast<uint8_t>(jmp_instruction);
+    data[RESET_VECTOR_ARGUMENT_ADDRESS] = static_cast<uint8_t>(BOOTLOADER_START_ADDRESS/2 >>8);
+    data[RESET_VECTOR_ARGUMENT_ADDRESS] = static_cast<uint8_t>(BOOTLOADER_START_ADDRESS/2);
+  }*/
+  writeToPageBuffer(address, data);
+  writePageBufferToFlash(address);
 }
+
 
 static inline void writeFlashFromI2C(uint8_t i2c_address){
   uint16_t start_address = getDataStartAddressInSource(i2c_address);
   uint16_t length = getDataLength(i2c_address);
-  uint16_t destination_address = 0;
-  LED_ON();
-  for(uint16_t i = start_address; i<length; ++i,destination_address+=2){
-
-    uint16_t payload = getWordFromSource(i2c_address, i);
-    writeToPageBuffer(destination_address, payload);
-    if(0 == (destination_address % SPM_PAGESIZE)){
-      writePageBufferToFlash(destination_address);
+  uint16_t word_count = 0;
+  uint8_t buf[SPM_PAGESIZE];
+  
+  for(uint16_t i = start_address; i<length; ++i,word_count+=2){
+    buf[i%SPM_PAGESIZE] = 0x55;//getWordFromSource(i2c_address, i);
+    if(word_count>0 && (0 == (word_count % SPM_PAGESIZE))){
+      adjustAddresses(i, &buf[0]);
       LED_TOGGLE();
     }
+    
+    /*
+    if (word_count <BOOTLOADER_START_ADDRESS) {
+
+      uint16_t payload = getWordFromSource(i2c_address, i);
+
+      adjustAddresses(word_count, payload);
+      if(word_count>0 && (0 == (word_count % SPM_PAGESIZE))){
+        writePageBufferToFlash(word_count);
+        LED_TOGGLE();
+      }
+
+    }*/
   }
 }
 
 int main(){
   init();
-  eraseFlash();
+  //eraseApplication();
   writeFlashFromI2C(source_i2c_address_for_program);
   return 0;
 }

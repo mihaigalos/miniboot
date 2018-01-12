@@ -1,6 +1,6 @@
 # MCU name
 MCU = atmega328p
-BOOTLOADER_START_ADDRESS = 0x6800
+BOOTLOADER_START_ADDRESS = 0x7A00
 
 # Main Oscillator Frequency
 # This is only used to define F_OSC in all assembler and c-sources.
@@ -125,10 +125,9 @@ EXTMEMOPTS = -Wl,--section-start=.text=$(BOOTLOADER_START_ADDRESS)
 #    -Map:      create map file
 #    --cref:    add cross reference to  map file
 LDFLAGS = -Wl,-Map=$(TARGET).map,--cref
-LDFLAGS += $(EXTMEMOPTS)
 LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 LDFLAGS += -Wl,--relax,--gc-sections,-Map=$(TARGET).map
-
+LDFLAGS += $(EXTMEMOPTS)
 
 
 # Programming support using avrdude. Settings and variables.

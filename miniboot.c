@@ -9,7 +9,7 @@ static inline uint16_t getDataStartAddressInSource(uint8_t i2c_address){
 
 static inline uint16_t getDataLength(uint8_t i2c_address){
   // multiple of SPM_PAGESIZE (128)
-  return 4*1024;
+  return 128*30;
 }
 
 void adjustAddresses(uint16_t address, uint8_t * data){
@@ -27,15 +27,18 @@ void adjustAddresses(uint16_t address, uint8_t * data){
 static inline void writeFlashFromI2C(uint8_t i2c_address){
   uint16_t start_address = getDataStartAddressInSource(i2c_address);
   uint16_t length = getDataLength(i2c_address);
-  uint16_t word_count = 0;
   uint8_t buf[SPM_PAGESIZE];
+  uint8_t writes = 0;
   
-  for(uint16_t i = start_address; i<length; ++i,word_count+=2){
-    buf[i%SPM_PAGESIZE] = 0x55;//getWordFromSource(i2c_address, i);
+  for(uint16_t word_count = start_address; word_count<length/2; word_count+=2){
+    
     if(word_count>0 && (0 == (word_count % SPM_PAGESIZE))){
-      adjustAddresses(i, &buf[0]);
+      adjustAddresses(writes*SPM_PAGESIZE, &buf[0]);
       LED_TOGGLE();
+      ++writes;
     }
+    buf[word_count%SPM_PAGESIZE] = 0x55;//getWordFromSource(i2c_address, i);
+    buf[(word_count+1)%SPM_PAGESIZE] = 0x55;
     
     /*
     if (word_count <BOOTLOADER_START_ADDRESS) {

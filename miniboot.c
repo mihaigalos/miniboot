@@ -41,10 +41,7 @@ static inline void writeFlashFromI2C(uint8_t i2c_address, uint16_t& application_
   uint8_t buf[SPM_PAGESIZE];
   uint8_t writes = 0;
 
-  uint16_t word_count = length / 2 + length % 2;
-
-  for (uint16_t pos = 0; pos < word_count; pos += 2) {
-
+  for (uint16_t pos = 0; pos < length; pos += 2) {
     if (pos > 0 && (0 == (pos % SPM_PAGESIZE))) {
       writeToFlash(writes * SPM_PAGESIZE, &buf[0], application_start);
       LED_TOGGLE();
@@ -54,6 +51,9 @@ static inline void writeFlashFromI2C(uint8_t i2c_address, uint16_t& application_
     buf[pos % SPM_PAGESIZE] = static_cast<uint8_t>(data >> 8);
     buf[(pos + 1) % SPM_PAGESIZE] = static_cast<uint8_t>(data);
   }
+  //flush page
+  writeToFlash(writes * SPM_PAGESIZE, &buf[0], application_start);
+  LED_OFF();
 }
 
 static void leaveBootloader(uint16_t& application_start) __attribute__((__noreturn__));
@@ -74,6 +74,7 @@ static inline bool isReflashNecessary(uint32_t& i2c_application_timestamp){
   
 }
 int main() {
+  
   init();
   uint32_t i2c_application_timestamp;
   if(isReflashNecessary(i2c_application_timestamp)){

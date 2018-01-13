@@ -36,6 +36,9 @@ static inline void writeFlashFromI2C(uint8_t i2c_address){
   uint16_t length = getDataLength(i2c_address);
   uint8_t buf[SPM_PAGESIZE];
   uint8_t writes = 0;
+  
+  uint16_t word_count = length/2 + length%2;
+  
   for(uint16_t pos = start_address; pos<length/2; pos+=2){
     
     if(pos>0 && (0 == (pos % SPM_PAGESIZE))){
@@ -47,18 +50,6 @@ static inline void writeFlashFromI2C(uint8_t i2c_address){
     buf[pos%SPM_PAGESIZE] = static_cast<uint8_t>(data);//
     buf[(pos+1)%SPM_PAGESIZE] = static_cast<uint8_t>(data>>8);
     delay(1000);
-    /*
-    if (word_count <BOOTLOADER_START_ADDRESS) {
-
-      uint16_t payload = getWordFromSource(i2c_address, i);
-
-      adjustAddresses(word_count, payload);
-      if(word_count>0 && (0 == (word_count % SPM_PAGESIZE))){
-        writePageBufferToFlash(word_count);
-        LED_TOGGLE();
-      }
-
-    }*/
   }
 }
 

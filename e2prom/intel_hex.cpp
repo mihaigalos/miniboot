@@ -158,7 +158,7 @@ void IntelHex::parse_intel_hex_from_flash(){
 }
 #endif // _DEBUG_
 
-void IntelHex::write_to_eeprom_i2c_old(uint8_t eeprom_i2c_address=0x50, uint16_t destination_start_byte){
+void IntelHex::write_to_eeprom_i2c_old(uint8_t eeprom_i2c_address, uint16_t destination_start_byte){
     E2PROM e (eeprom_i2c_address); 
     uint16_t total_size = sizeof(blink_hex) / sizeof(blink_hex[0]);
     Serial.begin(9600);
@@ -190,12 +190,68 @@ void IntelHex::write_to_eeprom_i2c_old(uint8_t eeprom_i2c_address=0x50, uint16_t
     Serial.println(">>> end i2c write");
 }
 
-void IntelHex::write_to_eeprom_i2c(uint8_t eeprom_i2c_address=0x50, uint16_t destination_start_byte){
+void IntelHex::write_vector(uint8_t eeprom_i2c_address, uint16_t destination_start_byte, uint8_t* vector, uint8_t size_in_bytes){
+  E2PROM e (0x50); 
+  #ifdef _DEBUG_
+    Serial.print("Writing to "); Serial.print (eeprom_i2c_address,HEX); 
+    Serial.print (":   @"); Serial.print (destination_start_byte); Serial.print ("    :");
+  #endif
+  for(uint8_t i = 0; i<size_in_bytes; ++i){
+    e.writeByte(destination_start_byte+i, vector[i]); 
+    #ifdef _DEBUG_
+    Serial.print ("    "); Serial.print (vector[i],HEX);
+    #endif
+  }
+  
+}
+
+void IntelHex::write_variable(uint8_t eeprom_i2c_address, uint16_t destination_start_byte, uint8_t* data, uint8_t size_in_bytes){
+  E2PROM e (0x50); 
+  #ifdef _DEBUG_
+    Serial.print(":Writing to "); Serial.print (eeprom_i2c_address,HEX); 
+    Serial.print (":   @"); Serial.print (destination_start_byte); Serial.print ("    :");
+  #endif
+  uint8_t j =0;
+  for(int8_t i = size_in_bytes-1; i>=0; --i,++j){
+    e.writeByte(destination_start_byte+j, data[i]); 
+    #ifdef _DEBUG_
+      Serial.print ("    "); Serial.print (data[i],HEX);
+    #endif
+  }
+}
+
+void IntelHex::write_preamble(uint8_t eeprom_i2c_address, uint16_t destination_start_byte){
+  uint8_t preamble[] = "miniboot";
+  write_vector(eeprom_i2c_address, destination_start_byte, preamble, sizeof(preamble)/sizeof(preamble[0])-1);
+
+  uint8_t application_name[]="blink\xFF\xFF\xFF\xFF\xFF";
+  write_vector(eeprom_i2c_address, destination_start_byte+8, application_name, sizeof(application_name)/sizeof(application_name[0])-1);
+  
+  uint32_t application_timestamp = 0x5A57CAB0;
+  write_variable(eeprom_i2c_address, destination_start_byte+18, reinterpret_cast<uint8_t*>(&application_timestamp), sizeof(application_timestamp));
+
+  uint32_t current_time = 0x5A5A2107;
+  write_variable(eeprom_i2c_address, destination_start_byte+22, reinterpret_cast<uint8_t*>(&current_time), sizeof(current_time));
+  
+  uint32_t crc = 0xAAAAAAAA;
+  write_variable(eeprom_i2c_address, destination_start_byte+26, reinterpret_cast<uint8_t*>(&crc), sizeof(crc));
+
+  uint16_t length = 1322;
+  write_variable(eeprom_i2c_address, destination_start_byte+30, reinterpret_cast<uint8_t*>(&length), sizeof(length));
+  
+ }
+
+void IntelHex::write_to_eeprom_i2c(uint8_t eeprom_i2c_address, uint16_t destination_start_byte){
   Serial.begin(600);
   Serial.println("Ready.");
+
+  write_preamble(eeprom_i2c_address, destination_start_byte);
+  
   E2PROM e (eeprom_i2c_address); 
 
-  uint16_t pos = 0;
+  uint16_t pos = 32+destination_start_byte;
+
+  
   do{
     if (Serial.available() > 0) {
       char incomingByte = Serial.read(); // read the incoming byte:

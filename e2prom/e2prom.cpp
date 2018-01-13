@@ -52,7 +52,7 @@ uint8_t E2PROM::readByte(uint16_t registerAddress)
 void E2PROM::dump(int8_t columnCount){
     Serial.begin(9600);
     for (auto i = 0; i < 4*1024; i++){
-        if(columnCount>0 && 0 == i%columnCount) Serial.println("");
+        //if(columnCount>0 && 0 == i%columnCount) Serial.println("");
         Serial.print (static_cast<char>(readByte(i)));
     }
     

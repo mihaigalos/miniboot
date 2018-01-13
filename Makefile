@@ -3,8 +3,8 @@ MCU = atmega328p
 BOOTLOADER_START_ADDRESS = 0x7A00
 
 # Main Oscillator Frequency
-# This is only used to define F_OSC in all assembler and c-sources.
-F_CPU = 16000000UL
+# This is only used to define F_CPU in all assembler and c-sources.
+F_CPU = 8000000UL
 
 # Output format. (can be srec, ihex, binary)
 FORMAT = ihex
@@ -31,7 +31,7 @@ ASRC =
 # Optimization level, can be [0, 1, 2, 3, s]. 
 # 0 = turn off optimization. s = optimize for size.
 # (Note: 3 is not always the best optimization level. See avr-libc FAQ.)
-OPT = s
+OPTIMIZATIONS = s
 
 # Debugging format.
 # Native formats for AVR-GCC's -g are stabs [default], or dwarf-2.
@@ -67,13 +67,13 @@ CINCS =
 #    -adhlns...: create assembler listing
 CFLAGS = -g$(DEBUG)
 CFLAGS += $(CDEFS) $(CINCS)
-CFLAGS += -O$(OPT) -pedantic
+CFLAGS += -O$(OPTIMIZATIONS) -pedantic
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 CFLAGS += -Wall -Wstrict-prototypes
 CFLAGS += -Wa,-adhlns=$(<:.c=.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
-CFLAGS += -DF_OSC=$(F_OSC)
+CFLAGS += -DF_CPU=$(F_CPU)
 
 
 
@@ -85,7 +85,7 @@ CFLAGS += -DF_OSC=$(F_OSC)
 #             and function names needs to be present in the assembler source
 #             files -- see avr-libc docs [FIXME: not yet described there]
 ASFLAGS = -Wa,-adhlns=$(<:.S=.lst),-gstabs 
-ASFLAGS += -DF_OSC=$(F_OSC)
+ASFLAGS += -DF_CPU=$(F_CPU)
 
 
 #Additional libraries.

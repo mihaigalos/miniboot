@@ -2,6 +2,7 @@
 
 #include <avr/wdt.h>
 #include "io.h"
+#include "I2C-master-lib/i2c_master.h"
 
 static void initIO(){
   LED_INIT();
@@ -18,5 +19,6 @@ static void disableWatchdog(){
 static void init()
 {
   disableWatchdog();
+  i2c_init();
   initIO();
 }

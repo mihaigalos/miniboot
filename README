@@ -3,4 +3,4 @@ Computing the hexadecimal address for bootloader start section:
 - for the size of your device (8kb = 1024 * 8 = 8192) minus above value 2123... = 6069
 - Which yelds 6069 / 64 (mega328p page size in bytes) = 94.828125 pages of flash memory
 - round it down to 94 - our new bootloader address is 94 * 64 = 6016, in hex = 1780h
-- put the value in the BOOTLOADER_START_ADDRESS macro: #define BOOTLOADER_START_ADDRESS 1780
+- put the value in the BOOTLOADER_START_ADDRESS macro in the Makefile of manually edit bootloader.h

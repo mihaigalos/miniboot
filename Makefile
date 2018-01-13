@@ -1,6 +1,7 @@
 # MCU name
 MCU = atmega328p
-BOOTLOADER_START_ADDRESS = 0x7A00
+BOOTLOADER_START_ADDRESS = 0x7900
+EEPROM_CONFIGURATION_START_BYTE = 0x03F6
 
 # Main Oscillator Frequency
 # This is only used to define F_CPU in all assembler and c-sources.
@@ -366,6 +367,7 @@ bootloader.h:
 	@echo "#pragma once" >> $@
 	@echo -en '\n' >> $@
 	@echo "#define BOOTLOADER_START_ADDRESS $(BOOTLOADER_START_ADDRESS)" >> $@
+	@echo "#define EEPROM_CONFIGURATION_START_BYTE $(EEPROM_CONFIGURATION_START_BYTE)" >> $@
 	@echo
 
 # Target: clean project.
@@ -389,7 +391,8 @@ clean_list :
 	$(REMOVE) $(LST)
 	$(REMOVE) $(SRC:.c=.s)
 	$(REMOVE) $(SRC:.c=.d)
-	$(REMOVE) .dep/*
+	$(REMOVE) .dep/* 
+	$(REMOVE) bootloader.h
 
 
 

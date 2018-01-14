@@ -15,12 +15,12 @@ static inline void eraseApplication() {
   wdt_reset();
 }
 
-static inline void erasePage(uint16_t address) {
+static inline void erasePage(const uint16_t address) {
   boot_page_erase(address);
   boot_spm_busy_wait();
 }
 
-static inline void writeToPageBuffer(uint16_t address, uint8_t *data) {
+static inline void writeToPageBuffer(const uint16_t address, uint8_t *data) {
   erasePage(address);
   for (uint8_t i = 0; i < SPM_PAGESIZE; i += 2) {
     uint16_t w = *data++;
@@ -29,7 +29,7 @@ static inline void writeToPageBuffer(uint16_t address, uint8_t *data) {
   }
 }
 
-static inline void writePageBufferToFlash(uint16_t address) {
+static inline void writePageBufferToFlash(const uint16_t address) {
   boot_page_write(address);
   boot_spm_busy_wait();
   boot_rww_enable();

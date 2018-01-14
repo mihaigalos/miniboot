@@ -3,7 +3,7 @@
 #include <avr/eeprom.h>
 #include "bootloader.h"
 
-void writeLatestApplicationTimestampToInternalEeprom(uint32_t latest_timestamp){
+void writeLatestApplicationTimestampToInternalEeprom(const uint32_t latest_timestamp){
   eeprom_write_byte (reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE),  latest_timestamp>>24);
   eeprom_write_byte (reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE+1),latest_timestamp>>16);
   eeprom_write_byte (reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE+2),latest_timestamp>>8);

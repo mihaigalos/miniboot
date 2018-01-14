@@ -1,7 +1,7 @@
 # Miniboot - an I2C bootloader for Arduino
 
 Miniboot started out as a weekend project early in 2018.
-Miniboot is a I2C bootloader for Arduino, tested on AtMega328p. It is designed to reflash
+It is a I2C bootloader for Arduino, tested on AtMega328p. It is designed to reflash
 the Mega328p with code residing in an external I2C memory or another I2C device. For testing,
 CAT24M01 32kByte external EEPROM was used.
 
@@ -12,17 +12,22 @@ automatically starts on a reset and looks for an I2C device at address 0x50 (CAT
 It then reads the length of the data and it starts reflashing the microcontroller with the information
 stated there. It expects the following memory layout in the EEPROM:
 
-[last free byte pointer]          : 2 bytes
-['m' 'i' 'n' 'i' 'b' 'o' 'o' 't'] : 8 bytes
-[name of application]             : 10 bytes - user defined
-[timestamp application]           : 4 bytes - unix timestamp when the application in the I2C memory was generated
-[timestamp of write]              : 4 bytes - unix timestamp when the application was flashed to the I2c memory
-[CRC]                             : 4 bytes - ignore for the moment, not used
-[length]                          : 2 bytes - amount of bytes for the application
-[application]                     : n bytes - actual payload of the application code
+- [last free byte pointer]          : 2 bytes
+- ['m' 'i' 'n' 'i' 'b' 'o' 'o' 't'] : 8 bytes
+- [name of application]             : 10 bytes - user defined
+- [timestamp application]           : 4 bytes - unix timestamp when the application in the I2C memory was generated
+- [timestamp of write]              : 4 bytes - unix timestamp when the application was flashed to the I2c memory
+- [CRC]                             : 4 bytes - ignore for the moment, not used
+- [length]                          : 2 bytes - amount of bytes for the application
+- [application]                     : n bytes - actual payload of the application code
 
 As a side note, the length and actual applicatin are the most important bytes. Other bytes may be ignored, it is
 however important that the length be at byte location 32 and the application start at byte 34.
+
+After the reflash, miniboot writes the application timestamp (specified earlier) to 4 bytes in the microcontroller's
+internal EEPROM. The next time the system restarts, it will compare the application's timestamp with the information
+it reads from the internal eeprom and will only rewrite it again if the timestamp is newer or the internal eeprom
+is unprogrammed (4 bytes of 0xFF). This is to prevent rewrite on each system restart.
 
 # Bootloader start address
 

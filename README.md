@@ -11,7 +11,7 @@ CAT24M01 32kByte external EEPROM was used.
 
 `git clone --recursive  https://github.com/mihaigalos/miniboot.git`
 
-If you downloaded the sources manually, make sure to also manually download the dependencies, they are not automatically downloaded!
+If you downloaded the sources manually, make sure to also manually download the dependencies (i.e. : I2C-master-lib), they are not automatically downloaded!
 
 ## Build the hex
 `make install`

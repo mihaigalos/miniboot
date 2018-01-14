@@ -30,10 +30,10 @@ void setup() {
     //e.dump(43);
     //uint8_t buffer[] = {"AAA!"};
     //e.writePage(10, &buffer[0], 5);
-     e.dump();
-      //ihex.parse_intel_hex_from_flash();
+    //e.dump();
+    //ihex.parse_intel_hex_from_flash();
 }
 
 void loop() {
-  //ihex.write_to_eeprom_i2c(0x50,2);
+  ihex.write_to_eeprom_i2c(0x50,2);
 }

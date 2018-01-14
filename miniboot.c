@@ -51,7 +51,15 @@ static inline void writeFlashFromI2C(uint8_t i2c_address, uint16_t& application_
     buf[pos % SPM_PAGESIZE] = static_cast<uint8_t>(data >> 8);
     buf[(pos + 1) % SPM_PAGESIZE] = static_cast<uint8_t>(data);
   }
-  //flush page
+  
+ 
+  //TODO: Const methods, add const to parameters!
+  
+  
+  for(uint16_t pos = SPM_PAGESIZE-(static_cast<uint16_t>(writes+1) * static_cast<uint16_t>(SPM_PAGESIZE))%length;pos<SPM_PAGESIZE;++pos){
+    buf[pos] = 0xFF; // reset contents, since these bytes were not filled in this page and have value from previous page
+  }
+  
   writeToFlash(writes * SPM_PAGESIZE, &buf[0], application_start);
   LED_OFF();
 }

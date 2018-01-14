@@ -6,7 +6,9 @@ the Mega328p with code residing in an external I2C memory or another I2C device.
 CAT24M01 32kByte external EEPROM was used.
 
 # Usage
-`make install` will produce the miniboot.hex file you can then flash to your Arduino. The bootloader
+`make install`
+
+This will produce the miniboot.hex file you can then flash to your Arduino. The bootloader
 automatically starts on a reset and looks for an I2C device at address 0x50 (CAT24M01's default address).
 
 It then reads the length of the data and it starts reflashing the microcontroller with the information
@@ -37,7 +39,7 @@ section, specified by the High fusebits. I reccommend using 2048 words (4096 byt
 the bootloader section (Hi fuse : 0xD9).
 
 Computing the hexadecimal address for bootloader start section:
-- make clean; make main.hex; ### take output, let's say it's 2123 (or similar)
+- make clean; make main.hex; take output, let's say it's 2123 (or similar)
 - for the size of your device (8kb = 1024 * 8 = 8192) minus above value 2123... = 6069
 - Which yelds 6069 / 64 (mega328p page size in bytes) = 94.828125 pages of flash memory
 - round it down to 94 - our new bootloader address is 94 * 64 = 6016, in hex = 1780h
@@ -50,6 +52,7 @@ To write an application to the I2C memory, one can use a USB to UART bridge.
 The arduino needs to be flashed with the e2prom sketch which can be found in the e2prom/ folder in this repo.
 
 Export the hex file of the application (you want to transfer to the I2C memory) to binary before continuing:
+
 `avr-objcopy.exe -I ihex application.hex -O binary application.bin`
 
 We finally want to send it over UART to the microcontroller which will write it to the I2C memory.

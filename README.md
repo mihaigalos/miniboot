@@ -62,10 +62,11 @@ To overcome this, go to Terminal->Settings->select Terminal Type: binary. Select
 - If your Arduino is running at 16Mhz : select 600 bits per second.
 - If your Arduino is running at 8Mhz or have a custom board runing at 8Mhz: select 300 bits per second.
 
+The low baudrate ensures the external EEPROM has time to write the payload it receives.
+
 Next select the exported binary file (application.bin) and click Send File.
 
 You should now be able to send the file in full via UART now.
 
 # License
 This software is freely available under the GNU GPL v3.0 aegis, please consult the LICENSE file for further information.
-For commercial licenses, I can be contacted at mihaigalos at gmail dot com.

@@ -95,6 +95,7 @@ static inline bool isReflashNecessary(uint32_t &i2c_application_timestamp) {
     return true;
   return false;
 }
+
 int main() {
 
   init();

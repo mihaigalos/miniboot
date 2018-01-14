@@ -6,6 +6,12 @@ the Mega328p with code residing in an external I2C memory or another I2C device.
 CAT24M01 32kByte external EEPROM was used.
 
 # Usage
+
+## Get the sources
+`git clone --recursive  https://github.com/mihaigalos/miniboot.git`
+If you donwload manually, make sure to also manually download the dependencies, they are not automatically downloaded!
+
+## Build the hex
 `make install`
 
 This will produce the miniboot.hex file you can then flash to your Arduino. The bootloader

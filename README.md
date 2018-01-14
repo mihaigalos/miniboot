@@ -14,7 +14,7 @@ automatically starts on a reset and looks for an I2C device at address 0x50 (CAT
 It then reads the length of the data and it starts reflashing the microcontroller with the information
 stated there. It expects the following memory layout in the EEPROM:
 
-- [last free byte pointer]          : 2 bytes
+- [last free byte pointer]          : 2 bytes - should point to first byte after the appplication
 - ['m' 'i' 'n' 'i' 'b' 'o' 'o' 't'] : 8 bytes
 - [name of application]             : 10 bytes - user defined
 - [timestamp application]           : 4 bytes - unix timestamp when the application in the I2C memory was generated

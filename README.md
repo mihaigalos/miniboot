@@ -46,10 +46,10 @@ Computing the hexadecimal address for bootloader start section:
 - put the value in the BOOTLOADER_START_ADDRESS macro in the Makefile of manually edit bootloader.h
 
 # Storing the application in the EEPROM
-This section is not part of miniboot per se, and is here purely for technical documentation.
+This section, along with the Drivers/ folder is not part of miniboot per se, and is here purely for technical documentation.
 
 To write an application to the I2C memory, one can use a USB to UART bridge.
-The arduino needs to be flashed with the e2prom sketch which can be found in the e2prom/ folder in this repo.
+The arduino needs to be flashed with the e2prom sketch which can be found in the Drivers/Eeprom/ folder in this repo.
 
 Export the hex file of the application (you want to transfer to the I2C memory) to binary before continuing:
 

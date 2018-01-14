@@ -1,4 +1,4 @@
-# Miniboot - an I2C bootloader for Arduino
+# Miniboot - an I2C bootloader for Arduino [![license](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)](LICENSE)
 
 Miniboot started out as a weekend project early in 2018.
 It is a I2C bootloader for Arduino, tested on AtMega328p. It is designed to reflash
@@ -64,4 +64,7 @@ To overcome this, go to Terminal->Settings->select Terminal Type: binary. Select
 
 Next select the exported binary file (application.bin) and click Send File.
 
-You should now be able to send the file in full via UART now. 
+You should now be able to send the file in full via UART now.
+
+# License
+This software is freely available under the GNU GPL v3.0 aegis, please consult the LICENSE file for further information.

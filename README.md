@@ -68,3 +68,4 @@ You should now be able to send the file in full via UART now.
 
 # License
 This software is freely available under the GNU GPL v3.0 aegis, please consult the LICENSE file for further information.
+For commercial licenses, I can be contacted at mihaigalos at gmail dot com.

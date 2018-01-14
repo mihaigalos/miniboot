@@ -3,6 +3,14 @@
 #include <avr/eeprom.h>
 #include "bootloader.h"
 
+#if 0
+void writeToInternalEeprom(const uint16_t data){
+  eeprom_write_byte (reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE+4),data>>8);
+  eeprom_write_byte (reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE+5),data);
+  boot_spm_busy_wait();
+}
+#endif // #if 0
+
 void writeLatestApplicationTimestampToInternalEeprom(const uint32_t latest_timestamp){
   eeprom_write_byte (reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE),  latest_timestamp>>24);
   eeprom_write_byte (reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE+1),latest_timestamp>>16);

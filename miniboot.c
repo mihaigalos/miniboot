@@ -72,7 +72,7 @@ static inline bool isReflashNecessary(uint32_t& i2c_application_timestamp){
   i2c_application_timestamp = static_cast<uint32_t>(getWordFromSource(source_i2c_address_for_program, 20))<<16;
   i2c_application_timestamp |= static_cast<uint32_t>(getWordFromSource(source_i2c_address_for_program, 22));
   
-  if(0xFFFFFFFF == current_application_timestamp) return true;
+  if(eeprom_not_programmed == current_application_timestamp) return true;
   if(i2c_application_timestamp>current_application_timestamp) return true;
   return false;
   
@@ -81,13 +81,17 @@ int main() {
   
   init();
   uint32_t i2c_application_timestamp;
+  uint16_t application_start = 0;
   if(isReflashNecessary(i2c_application_timestamp)){
     eraseApplication();
-    uint16_t application_start = 0;
     writeFlashFromI2C(source_i2c_address_for_program, application_start);
     writeLatestApplicationTimestampToInternalEeprom(i2c_application_timestamp);
-    leaveBootloader(application_start);
+  } else {
+    uint16_t address_in_external_eeprom = getWordFromSource(source_i2c_address_for_program, 36);
+    application_start = address_in_external_eeprom>>8;
+    application_start |= static_cast<uint8_t>(address_in_external_eeprom);
   }
+  leaveBootloader(application_start);
   
   return 0;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "bootloader.h"
+#include <avr/boot.h>
 #include <avr/eeprom.h>
 
 #if 0

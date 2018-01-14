@@ -9,11 +9,11 @@
 #include "init.h"
 
 static inline uint16_t getDataStartAddressInSource(const uint8_t i2c_address) {
-  return 34;
+  return application_byte_offset;
 }
 
 static inline uint16_t getDataLength(const uint8_t i2c_address) {
-  return getWordFromSource(i2c_address, 32);
+  return getWordFromSource(i2c_address, application_length_byte_offset);
 }
 
 static inline void writeToFlash(const uint16_t address, uint8_t *data,
@@ -83,11 +83,12 @@ static inline void leaveBootloader(uint16_t &application_start) {
 static inline bool isReflashNecessary(uint32_t &i2c_application_timestamp) {
   uint32_t current_application_timestamp =
       readLatestApplicationTimestampFromInternalEeprom();
-  i2c_application_timestamp = static_cast<uint32_t>(getWordFromSource(
-                                  source_i2c_address_for_program, 20))
-                              << 16;
-  i2c_application_timestamp |= static_cast<uint32_t>(
-      getWordFromSource(source_i2c_address_for_program, 22));
+  i2c_application_timestamp =
+      static_cast<uint32_t>(getWordFromSource(
+          source_i2c_address_for_program, timestamp_application_byte_offset))
+      << 16;
+  i2c_application_timestamp |= static_cast<uint32_t>(getWordFromSource(
+      source_i2c_address_for_program, timestamp_application_byte_offset + 2));
 
   if (eeprom_not_programmed == current_application_timestamp)
     return true;
@@ -106,8 +107,8 @@ int main() {
     writeFlashFromI2C(source_i2c_address_for_program, application_start);
     writeLatestApplicationTimestampToInternalEeprom(i2c_application_timestamp);
   } else {
-    uint16_t address_in_external_eeprom =
-        getWordFromSource(source_i2c_address_for_program, 36);
+    uint16_t address_in_external_eeprom = getWordFromSource(
+        source_i2c_address_for_program, application_start_address_byte_offset);
     application_start = address_in_external_eeprom >> 8;
     application_start |= static_cast<uint8_t>(address_in_external_eeprom);
   }

@@ -7,3 +7,8 @@ static constexpr uint8_t source_i2c_address_for_program =
 
 static constexpr uint32_t eeprom_not_programmed =
     0xFFFFFFFF; // default value in eeprom when not programmed
+
+static constexpr uint8_t timestamp_application_byte_offset = 20;
+static constexpr uint8_t application_length_byte_offset = 32;
+static constexpr uint8_t application_byte_offset = 34;
+static constexpr uint8_t application_start_address_byte_offset = 36;

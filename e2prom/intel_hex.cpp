@@ -2,29 +2,31 @@
 #include "e2prom.h"
 
 #define debug(X) Serial.print(X)
-#define debug2(X,Y) Serial.print(X,Y)
+#define debug2(X, Y) Serial.print(X, Y)
 #define debugn(X) Serial.println(X)
 
 const uint8_t hex_file_line_length = 43;
-const uint8_t metadata_length = 11; // inclues <':'-1 character><size-2 characters><address-4 characters><type-2 characters><CRC-2 characters>
+const uint8_t metadata_length = 11; // inclues <':'-1 character><size-2
+                                    // characters><address-4 characters><type-2
+                                    // characters><CRC-2 characters>
 
-typedef enum {
-  Intel_Hex_Data =0,
-  Intel_Hex_EndOfFile
-}TRecordType;
+typedef enum { Intel_Hex_Data = 0, Intel_Hex_EndOfFile } TRecordType;
 
 uint32_t hex2int(const char *source_address, uint8_t start, uint8_t count) {
-    uint32_t val = 0;
-    for (uint8_t i =0; i<count; ++i) {
-        uint8_t byte = pgm_read_byte(source_address + start + i); 
-        if (byte >= '0' && byte <= '9') byte = byte - '0';
-        else if (byte >= 'A' && byte <='F') byte = byte - 'A' + 10;    
-        val = (val << 4) | (byte & 0xF);
-    }
-    return val;
+  uint32_t val = 0;
+  for (uint8_t i = 0; i < count; ++i) {
+    uint8_t byte = pgm_read_byte(source_address + start + i);
+    if (byte >= '0' && byte <= '9')
+      byte = byte - '0';
+    else if (byte >= 'A' && byte <= 'F')
+      byte = byte - 'A' + 10;
+    val = (val << 4) | (byte & 0xF);
+  }
+  return val;
 }
 
-const uint8_t blink_hex[] PROGMEM= {":100000000C945E000C9470000C9470000C947000C2\
+const uint8_t blink_hex[] PROGMEM = {
+    ":100000000C945E000C9470000C9470000C947000C2\
 :100010000C9470000C9470000C9470000C947000A0\
 :100020000C9470000C9470000C9470000C94700090\
 :100030000C9470000C9470000C9470000C94700080\
@@ -111,154 +113,196 @@ const uint8_t blink_hex[] PROGMEM= {":100000000C945E000C9470000C9470000C947000C2
 
 #ifdef _DEBUG_
 
-void IntelHex::parse_intel_hex_from_flash(){
+void IntelHex::parse_intel_hex_from_flash() {
 
   Serial.begin(9600);
 
-  uint8_t * p = &blink_hex[0];
+  uint8_t *p = &blink_hex[0];
   uint8_t step_in_file = hex_file_line_length;
 
-  for(uint16_t i = 0; ; ++i,p+=step_in_file){
-    uint8_t page_size = hex2int(p,1,2);
-    if(page_size*2+metadata_length < hex_file_line_length) step_in_file = page_size*2 + metadata_length;
+  for (uint16_t i = 0;; ++i, p += step_in_file) {
+    uint8_t page_size = hex2int(p, 1, 2);
+    if (page_size * 2 + metadata_length < hex_file_line_length)
+      step_in_file = page_size * 2 + metadata_length;
 
-    debug("step: "); debug2(step_in_file, DEC);
-    
-    debug("    size: "); debug2(page_size, HEX);
-  
-    uint32_t address = hex2int(p,3,4);
+    debug("step: ");
+    debug2(step_in_file, DEC);
+
+    debug("    size: ");
+    debug2(page_size, HEX);
+
+    uint32_t address = hex2int(p, 3, 4);
     debug("    address: ");
 
-    if(address<=0xF) debug("000");
-    else if(address<=0xFF) debug("00"); 
-    else if(address<=0x0FFF) debug("0"); 
+    if (address <= 0xF)
+      debug("000");
+    else if (address <= 0xFF)
+      debug("00");
+    else if (address <= 0x0FFF)
+      debug("0");
     debug2(address, HEX);
-    
+
     uint8_t record_type = hex2int(p, 7, 2);
-    debug("    type: "); debug2(record_type, HEX);
-  
-    debug("    payload: "); 
-    if(0 == page_size && Intel_Hex_EndOfFile == static_cast<TRecordType>(record_type)) {
+    debug("    type: ");
+    debug2(record_type, HEX);
+
+    debug("    payload: ");
+    if (0 == page_size &&
+        Intel_Hex_EndOfFile == static_cast<TRecordType>(record_type)) {
       debug("FF");
     } else {
-      for(int j = 0;j<page_size*2;j+=4){
-        uint32_t payload = hex2int(p,9+j,4);
-        
-        if(payload<=0xF) debug("000");
-        else if(payload<=0xFF) debug("00");
-        else if(payload<=0x0FFF) debug("0"); 
-        debug2(payload, HEX); debug(" ");
+      for (int j = 0; j < page_size * 2; j += 4) {
+        uint32_t payload = hex2int(p, 9 + j, 4);
+
+        if (payload <= 0xF)
+          debug("000");
+        else if (payload <= 0xFF)
+          debug("00");
+        else if (payload <= 0x0FFF)
+          debug("0");
+        debug2(payload, HEX);
+        debug(" ");
       }
     }
     debugn("");
 
-    if(0 == page_size) break ; //end
+    if (0 == page_size)
+      break; // end
   }
-  
 }
 #endif // _DEBUG_
 
-void IntelHex::write_to_eeprom_i2c_old(uint8_t eeprom_i2c_address, uint16_t destination_start_byte){
-    E2PROM e (eeprom_i2c_address); 
-    uint16_t total_size = sizeof(blink_hex) / sizeof(blink_hex[0]);
-    Serial.begin(9600);
-    Serial.print("Total example intel hex file raw size: "); Serial.print(total_size); Serial.println(" bytes.");
-    Serial.println(">>> start i2c write");
+void IntelHex::write_to_eeprom_i2c_old(uint8_t eeprom_i2c_address,
+                                       uint16_t destination_start_byte) {
+  E2PROM e(eeprom_i2c_address);
+  uint16_t total_size = sizeof(blink_hex) / sizeof(blink_hex[0]);
+  Serial.begin(9600);
+  Serial.print("Total example intel hex file raw size: ");
+  Serial.print(total_size);
+  Serial.println(" bytes.");
+  Serial.println(">>> start i2c write");
 
-    uint8_t step_in_file = hex_file_line_length;
-    uint8_t current_page = 0;
-    
-    for(uint16_t position_in_file=0; position_in_file<total_size; position_in_file+=step_in_file, ++current_page)
-    {
-      uint8_t page_size = hex2int(&blink_hex[position_in_file],1,2);
-      uint8_t payload_position_in_page = 9;
-      uint8_t crc_position_in_page = 41;
-      
-        if(page_size*2+metadata_length < hex_file_line_length) step_in_file = page_size*2 + metadata_length;
-          
-          char buffer[E2PROM::eeprom_page_size]; memset(buffer, 0, E2PROM::eeprom_page_size);
-          
-          for(uint8_t j = 0;j<E2PROM::eeprom_page_size-1;++j){
-            buffer[j] = pgm_read_byte(&blink_hex[position_in_file+payload_position_in_page+j]);
-            //e.writeByte(current_page*E2PROM::eeprom_page_size+j, buffer[j]);
-          }
-          uint8_t crc_hi_nibble = pgm_read_byte(&blink_hex[position_in_file+crc_position_in_page]);
-          e.writeByte(current_page*E2PROM::eeprom_page_size+E2PROM::eeprom_page_size, crc_hi_nibble);
-          uint8_t crc_lo_nibble = pgm_read_byte(&blink_hex[position_in_file+crc_position_in_page+1]);
-          e.writeByte(current_page*E2PROM::eeprom_page_size+E2PROM::eeprom_page_size, crc_lo_nibble);
+  uint8_t step_in_file = hex_file_line_length;
+  uint8_t current_page = 0;
+
+  for (uint16_t position_in_file = 0; position_in_file < total_size;
+       position_in_file += step_in_file, ++current_page) {
+    uint8_t page_size = hex2int(&blink_hex[position_in_file], 1, 2);
+    uint8_t payload_position_in_page = 9;
+    uint8_t crc_position_in_page = 41;
+
+    if (page_size * 2 + metadata_length < hex_file_line_length)
+      step_in_file = page_size * 2 + metadata_length;
+
+    char buffer[E2PROM::eeprom_page_size];
+    memset(buffer, 0, E2PROM::eeprom_page_size);
+
+    for (uint8_t j = 0; j < E2PROM::eeprom_page_size - 1; ++j) {
+      buffer[j] = pgm_read_byte(
+          &blink_hex[position_in_file + payload_position_in_page + j]);
+      // e.writeByte(current_page*E2PROM::eeprom_page_size+j, buffer[j]);
     }
-    Serial.println(">>> end i2c write");
-}
-
-void IntelHex::write_vector(uint8_t eeprom_i2c_address, uint16_t destination_start_byte, uint8_t* vector, uint8_t size_in_bytes){
-  E2PROM e (0x50); 
-  #ifdef _DEBUG_
-    Serial.print("Writing to "); Serial.print (eeprom_i2c_address,HEX); 
-    Serial.print (":   @"); Serial.print (destination_start_byte); Serial.print ("    :");
-  #endif
-  for(uint8_t i = 0; i<size_in_bytes; ++i){
-    e.writeByte(destination_start_byte+i, vector[i]); 
-    #ifdef _DEBUG_
-    Serial.print ("    "); Serial.print (vector[i],HEX);
-    #endif
+    uint8_t crc_hi_nibble =
+        pgm_read_byte(&blink_hex[position_in_file + crc_position_in_page]);
+    e.writeByte(current_page * E2PROM::eeprom_page_size +
+                    E2PROM::eeprom_page_size,
+                crc_hi_nibble);
+    uint8_t crc_lo_nibble =
+        pgm_read_byte(&blink_hex[position_in_file + crc_position_in_page + 1]);
+    e.writeByte(current_page * E2PROM::eeprom_page_size +
+                    E2PROM::eeprom_page_size,
+                crc_lo_nibble);
   }
-  
+  Serial.println(">>> end i2c write");
 }
 
-void IntelHex::write_variable(uint8_t eeprom_i2c_address, uint16_t destination_start_byte, uint8_t* data, uint8_t size_in_bytes){
-  E2PROM e (0x50); 
-  #ifdef _DEBUG_
-    Serial.print(":Writing to "); Serial.print (eeprom_i2c_address,HEX); 
-    Serial.print (":   @"); Serial.print (destination_start_byte); Serial.print ("    :");
-  #endif
-  uint8_t j =0;
-  for(int8_t i = size_in_bytes-1; i>=0; --i,++j){
-    e.writeByte(destination_start_byte+j, data[i]); 
-    #ifdef _DEBUG_
-      Serial.print ("    "); Serial.print (data[i],HEX);
-    #endif
+void IntelHex::write_vector(uint8_t eeprom_i2c_address,
+                            uint16_t destination_start_byte, uint8_t *vector,
+                            uint8_t size_in_bytes) {
+  E2PROM e(0x50);
+#ifdef _DEBUG_
+  Serial.print("Writing to ");
+  Serial.print(eeprom_i2c_address, HEX);
+  Serial.print(":   @");
+  Serial.print(destination_start_byte);
+  Serial.print("    :");
+#endif
+  for (uint8_t i = 0; i < size_in_bytes; ++i) {
+    e.writeByte(destination_start_byte + i, vector[i]);
+#ifdef _DEBUG_
+    Serial.print("    ");
+    Serial.print(vector[i], HEX);
+#endif
   }
 }
 
-void IntelHex::write_preamble(uint8_t eeprom_i2c_address, uint16_t destination_start_byte){
+void IntelHex::write_variable(uint8_t eeprom_i2c_address,
+                              uint16_t destination_start_byte, uint8_t *data,
+                              uint8_t size_in_bytes) {
+  E2PROM e(0x50);
+#ifdef _DEBUG_
+  Serial.print(":Writing to ");
+  Serial.print(eeprom_i2c_address, HEX);
+  Serial.print(":   @");
+  Serial.print(destination_start_byte);
+  Serial.print("    :");
+#endif
+  uint8_t j = 0;
+  for (int8_t i = size_in_bytes - 1; i >= 0; --i, ++j) {
+    e.writeByte(destination_start_byte + j, data[i]);
+#ifdef _DEBUG_
+    Serial.print("    ");
+    Serial.print(data[i], HEX);
+#endif
+  }
+}
+
+void IntelHex::write_preamble(uint8_t eeprom_i2c_address,
+                              uint16_t destination_start_byte) {
   uint8_t preamble[] = "miniboot";
-  write_vector(eeprom_i2c_address, destination_start_byte, preamble, sizeof(preamble)/sizeof(preamble[0])-1);
+  write_vector(eeprom_i2c_address, destination_start_byte, preamble,
+               sizeof(preamble) / sizeof(preamble[0]) - 1);
 
-  uint8_t application_name[]="blink\xFF\xFF\xFF\xFF\xFF";
-  write_vector(eeprom_i2c_address, destination_start_byte+8, application_name, sizeof(application_name)/sizeof(application_name[0])-1);
-  
+  uint8_t application_name[] = "blink\xFF\xFF\xFF\xFF\xFF";
+  write_vector(eeprom_i2c_address, destination_start_byte + 8, application_name,
+               sizeof(application_name) / sizeof(application_name[0]) - 1);
+
   uint32_t application_timestamp = 0x5A57CAB0;
-  write_variable(eeprom_i2c_address, destination_start_byte+18, reinterpret_cast<uint8_t*>(&application_timestamp), sizeof(application_timestamp));
+  write_variable(eeprom_i2c_address, destination_start_byte + 18,
+                 reinterpret_cast<uint8_t *>(&application_timestamp),
+                 sizeof(application_timestamp));
 
   uint32_t current_time = 0x5A5A2107;
-  write_variable(eeprom_i2c_address, destination_start_byte+22, reinterpret_cast<uint8_t*>(&current_time), sizeof(current_time));
-  
+  write_variable(eeprom_i2c_address, destination_start_byte + 22,
+                 reinterpret_cast<uint8_t *>(&current_time),
+                 sizeof(current_time));
+
   uint32_t crc = 0xAAAAAAAA;
-  write_variable(eeprom_i2c_address, destination_start_byte+26, reinterpret_cast<uint8_t*>(&crc), sizeof(crc));
+  write_variable(eeprom_i2c_address, destination_start_byte + 26,
+                 reinterpret_cast<uint8_t *>(&crc), sizeof(crc));
 
   uint16_t length = 1322;
-  write_variable(eeprom_i2c_address, destination_start_byte+30, reinterpret_cast<uint8_t*>(&length), sizeof(length));
-  
- }
+  write_variable(eeprom_i2c_address, destination_start_byte + 30,
+                 reinterpret_cast<uint8_t *>(&length), sizeof(length));
+}
 
-void IntelHex::write_to_eeprom_i2c(uint8_t eeprom_i2c_address, uint16_t destination_start_byte){
+void IntelHex::write_to_eeprom_i2c(uint8_t eeprom_i2c_address,
+                                   uint16_t destination_start_byte) {
   Serial.begin(600);
   Serial.println("Ready.");
 
   write_preamble(eeprom_i2c_address, destination_start_byte);
-  
-  E2PROM e (eeprom_i2c_address); 
 
-  uint16_t pos = 32+destination_start_byte;
+  E2PROM e(eeprom_i2c_address);
 
-  
-  do{
+  uint16_t pos = 32 + destination_start_byte;
+
+  do {
     if (Serial.available() > 0) {
       char incomingByte = Serial.read(); // read the incoming byte:
-      //Serial.println(incomingByte);
+      // Serial.println(incomingByte);
       e.writeByte(pos++, incomingByte);
     }
-  
-  }while(1);
-}
 
+  } while (1);
+}

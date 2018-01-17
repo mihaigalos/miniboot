@@ -2,6 +2,7 @@
 //  Fuses :     Ext: 0xFF, Hi: 0xD8, Lo: 0xE2
 //
 
+#include "Drivers/CRC/crc32.h"
 #include "bootloader.h"
 #include "eeprom.h"
 #include "flash.h"
@@ -38,6 +39,41 @@ static inline void writeToFlash(const uint16_t address, uint8_t *data,
 void delay(volatile uint16_t count) {
   for (volatile uint16_t i = 0; i < count; ++i)
     ;
+}
+
+static bool isCrcOk(const uint8_t i2c_address) {
+  bool status = false;
+  uint32_t crc = 0;
+  uint16_t start_address = getDataStartAddressInSource(i2c_address);
+  uint16_t length = getDataLength(i2c_address);
+  uint8_t writes = 0;
+
+  for (uint16_t pos = 0; pos < length; pos += 2) {
+    uint16_t data = getWordFromSource(i2c_address, pos + start_address);
+    crc = crc32(crc, reinterpret_cast<uint8_t *>(&data));
+    LED_TOGGLE();
+  }
+  /*
+  for (uint16_t pos = SPM_PAGESIZE -
+                      (static_cast<uint16_t>(writes + 1) *
+                       static_cast<uint16_t>(SPM_PAGESIZE)) %
+                          length;
+       pos < SPM_PAGESIZE; ++pos) {
+    uint16_t data = getWordFromSource(i2c_address, pos + start_address);
+    crc = crc32(crc, reinterpret_cast<uint8_t*>(&data));
+  }*/
+
+  uint32_t expected_crc = 0x508ac7bd;
+
+  /*uint32_t expected_crc = static_cast<uint32_t>(getWordFromSource(i2c_address,
+  application_crc_should_index))<<16;
+  expected_crc |= static_cast<uint32_t>(getWordFromSource(i2c_address,
+  application_crc_should_index));*/
+
+  if (crc == expected_crc) {
+    status = true;
+  }
+  return status;
 }
 
 static inline void writeFlashFromI2C(const uint8_t i2c_address,
@@ -102,7 +138,8 @@ int main() {
   init();
   uint32_t i2c_application_timestamp;
   uint16_t application_start = 0;
-  if (isReflashNecessary(i2c_application_timestamp)) {
+  if (isReflashNecessary(i2c_application_timestamp) &&
+      isCrcOk(source_i2c_address_for_program)) {
     eraseApplication();
     writeFlashFromI2C(source_i2c_address_for_program, application_start);
     writeLatestApplicationTimestampToInternalEeprom(i2c_application_timestamp);

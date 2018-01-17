@@ -14,7 +14,7 @@ CAT24M01 32kByte external EEPROM was used.
 If you've downloaded the sources manually, make sure to also manually download the dependencies (i.e. : I2C-master-lib), they are not automatically downloaded!
 
 ## Build the hex
-`make install`
+`make rebuild`
 
 This will produce the miniboot.hex file you can then flash to your Arduino. The bootloader
 automatically starts on a reset and looks for an I2C device at address 0x50 (CAT24M01's default address).

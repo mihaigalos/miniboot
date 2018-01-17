@@ -1,5 +1,5 @@
 //
-//  Fuses :     Ext: 0xFF, Hi: 0xD9, Lo: 0xE2
+//  Fuses :     Ext: 0xFF, Hi: 0xD8, Lo: 0xE2
 //
 
 #include "bootloader.h"

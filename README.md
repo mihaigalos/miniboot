@@ -1,7 +1,7 @@
 # Miniboot - an I2C bootloader for Arduino [![license](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)](LICENSE)
 
 Miniboot started out as a weekend project early in 2018.
-It is a I2C bootloader for Arduino, tested on AtMega328p. It is designed to reflash
+It is an I2C bootloader for Arduino, tested on AtMega328p. It is designed to reflash
 the Mega328p with code residing in an external I2C memory or another I2C device. For testing,
 CAT24M01 32kByte external EEPROM was used.
 
@@ -11,7 +11,7 @@ CAT24M01 32kByte external EEPROM was used.
 
 `git clone --recursive  https://github.com/mihaigalos/miniboot.git`
 
-If you downloaded the sources manually, make sure to also manually download the dependencies (i.e. : I2C-master-lib), they are not automatically downloaded!
+If you've downloaded the sources manually, make sure to also manually download the dependencies (i.e. : I2C-master-lib), they are not automatically downloaded!
 
 ## Build the hex
 `make install`
@@ -37,14 +37,15 @@ however important that the length be at byte location 32 and the application sta
 After the reflash, miniboot writes the application timestamp (specified earlier) to 4 bytes in the microcontroller's
 internal EEPROM. The next time the system restarts, it will compare the application's timestamp with the information
 it reads from the internal eeprom and will only rewrite it again if the timestamp is newer or the internal eeprom
-is unprogrammed (4 bytes of 0xFF). This is to prevent rewrite on each system restart.
+is unprogrammed (4 bytes of 0xFF). This prevents a new rewrite on each system restart.
 
 # Bootloader start address
 
 Miniboot can be modified to place the bootloader code at a specific address, via
 the macro BOOTLOADER_START_ADDRESS. Please ensure that the address lies in the bootloader
-section, specified by the High fusebits. I reccommend using 2048 words (4096 bytes) for
-the bootloader section (Hi fuse : 0xD9).
+section, specified by the High fusebits. I reccommend using at least 1024 words (2048 bytes) for
+the bootloader section (Hi fuse : 0xD8). If you choose to modify miniboot, please ensure that your new bootloader
+fits in the section you specify with the Hi fuse.
 
 Computing the hexadecimal address for bootloader start section:
 - make clean; make main.hex; take output, let's say it's 2123 (or similar)
@@ -77,7 +78,7 @@ The low baudrate ensures the external EEPROM has time to write the payload it re
 
 Next select the exported binary file (application.bin) and click Send File.
 
-You should now be able to send the file in full via UART now.
+You should now be able to send the file in full via UART.
 
 # License
 This software is freely available under the GNU GPL v3.0 aegis, please consult the LICENSE file for further information.

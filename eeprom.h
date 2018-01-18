@@ -4,21 +4,30 @@
 #include <avr/boot.h>
 #include <avr/eeprom.h>
 
-#if 0
+/*#if 0
 void writeToInternalEeprom(const uint16_t data){
-  eeprom_write_byte (reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE+4),data>>8);
-  eeprom_write_byte (reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE+5),data);
+  eeprom_write_byte (reinterpret_cast<uint8_t
+*>(EEPROM_CONFIGURATION_START_BYTE+4),data>>8);
+  eeprom_write_byte (reinterpret_cast<uint8_t
+*>(EEPROM_CONFIGURATION_START_BYTE+5),data);
   boot_spm_busy_wait();
-}
+}*/
 
-void writeToInternalEeprom(const uint32_t data){
-  eeprom_write_byte (reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE+4),data>>24);
-  eeprom_write_byte (reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE+5),data>>16);
-  eeprom_write_byte (reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE+6),data>>8);
-  eeprom_write_byte (reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE+7),data);
+void writeToInternalEeprom(const uint32_t data) {
+  eeprom_write_byte(
+      reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE + 4),
+      data >> 24);
+  eeprom_write_byte(
+      reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE + 5),
+      data >> 16);
+  eeprom_write_byte(
+      reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE + 6),
+      data >> 8);
+  eeprom_write_byte(
+      reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE + 7), data);
   boot_spm_busy_wait();
 }
-#endif // #if 0
+//#endif // #if 0
 
 void writeLatestApplicationTimestampToInternalEeprom(
     const uint32_t latest_timestamp) {

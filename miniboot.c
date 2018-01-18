@@ -36,23 +36,28 @@ static inline void writeToFlash(const uint16_t address, uint8_t *data,
   writePageBufferToFlash(address);
 }
 
-void delay(volatile uint16_t count) {
-  for (volatile uint16_t i = 0; i < count; ++i)
-    ;
-}
-
-static bool isCrcOk(const uint8_t i2c_address) {
+static inline bool isCrcOk(const uint8_t i2c_address) {
   bool status = false;
   uint32_t crc = 0;
   uint16_t start_address = getDataStartAddressInSource(i2c_address);
   uint16_t length = getDataLength(i2c_address);
   uint8_t writes = 0;
 
+  uint32_t table[crc_table_size];
+  init_table(&table[0]);
+
   for (uint16_t pos = 0; pos < length; pos += 2) {
     uint16_t data = getWordFromSource(i2c_address, pos + start_address);
-    crc = crc32(crc, reinterpret_cast<uint8_t *>(&data));
-    LED_TOGGLE();
+    uint8_t to_little_endian[2];
+    to_little_endian[0] = static_cast<uint8_t>(data >> 8);
+    to_little_endian[1] = static_cast<uint8_t>(data);
+    // if( pos + 2 > length) data &= 0xFF00;
+    //----     crc = crc32(crc, reinterpret_cast<uint8_t *>(&data));
+    crc32(reinterpret_cast<const void *>(&to_little_endian[0]), 2, &table[0],
+          &crc);
+    // LED_TOGGLE();
   }
+  writeToInternalEeprom(crc);
   /*
   for (uint16_t pos = SPM_PAGESIZE -
                       (static_cast<uint16_t>(writes + 1) *
@@ -63,7 +68,7 @@ static bool isCrcOk(const uint8_t i2c_address) {
     crc = crc32(crc, reinterpret_cast<uint8_t*>(&data));
   }*/
 
-  uint32_t expected_crc = 0x508ac7bd;
+  uint32_t expected_crc = 0x4c9f71f9;
 
   /*uint32_t expected_crc = static_cast<uint32_t>(getWordFromSource(i2c_address,
   application_crc_should_index))<<16;

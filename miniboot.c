@@ -46,18 +46,23 @@ static inline bool isCrcOk(const uint8_t i2c_address) {
   uint32_t table[crc_table_size];
   init_table(&table[0]);
 
-  for (uint16_t pos = 0; pos < length; pos += 2) {
+  for (uint16_t pos = 0; pos < length + 1;
+       pos += 2) { // length +1 in case of odd number lengths
+    if (pos >= length)
+      break;
+
     uint16_t data = getWordFromSource(i2c_address, pos + start_address);
+    if (pos == length - 1)
+      data &= 0xFF00;
+
     uint8_t to_little_endian[2];
     to_little_endian[0] = static_cast<uint8_t>(data >> 8);
     to_little_endian[1] = static_cast<uint8_t>(data);
-    // if( pos + 2 > length) data &= 0xFF00;
-    //----     crc = crc32(crc, reinterpret_cast<uint8_t *>(&data));
+
     crc32(reinterpret_cast<const void *>(&to_little_endian[0]), 2, &table[0],
           &crc);
     // LED_TOGGLE();
   }
-  writeToInternalEeprom(crc);
   /*
   for (uint16_t pos = SPM_PAGESIZE -
                       (static_cast<uint16_t>(writes + 1) *

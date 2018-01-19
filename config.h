@@ -12,4 +12,4 @@ static constexpr uint8_t timestamp_application_byte_offset = 20;
 static constexpr uint8_t application_length_byte_offset = 32;
 static constexpr uint8_t application_byte_offset = 34;
 static constexpr uint8_t application_start_address_byte_offset = 36;
-static constexpr uint8_t application_crc_should_index = 28;
+static constexpr uint8_t application_crc_expected_index = 28;

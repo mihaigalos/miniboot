@@ -25,13 +25,16 @@ static inline void writeToFlash(const uint16_t address, uint8_t *data,
         static_cast<uint16_t>(data[RESET_VECTOR_ARGUMENT_ADDRESS] << 8));
     application_start |=
         static_cast<uint8_t>(data[RESET_VECTOR_ARGUMENT_ADDRESS + 1]);
+
     data[RESET_VECTOR] = static_cast<uint8_t>(jmp_instruction);
     data[RESET_VECTOR + 1] = static_cast<uint8_t>(jmp_instruction >> 8);
+
     data[RESET_VECTOR_ARGUMENT_ADDRESS] = static_cast<uint8_t>(
         static_cast<uint16_t>(BOOTLOADER_START_ADDRESS) / 2);
     data[RESET_VECTOR_ARGUMENT_ADDRESS + 1] = static_cast<uint8_t>(
         (static_cast<uint16_t>(BOOTLOADER_START_ADDRESS) / 2) >> 8);
   }
+
   writeToPageBuffer(address, data);
   writePageBufferToFlash(address);
 }
@@ -61,14 +64,17 @@ static inline bool isCrcOk(const uint8_t i2c_address) {
 
     crc32(reinterpret_cast<const void *>(&to_little_endian[0]), 2, &table[0],
           &crc);
-    // LED_TOGGLE();
+
+    uint8_t toggle_led_every_x_bytes = 128;
+    if (0 == pos % toggle_led_every_x_bytes)
+      LED_TOGGLE();
   }
 
   uint32_t expected_crc = static_cast<uint32_t>(getWordFromSource(
-                              i2c_address, application_crc_should_index))
+                              i2c_address, application_crc_expected_index))
                           << 16;
   expected_crc |= static_cast<uint32_t>(
-      getWordFromSource(i2c_address, application_crc_should_index + 2));
+      getWordFromSource(i2c_address, application_crc_expected_index + 2));
 
   if (crc == expected_crc) {
     status = true;
@@ -119,6 +125,7 @@ static inline void leaveBootloader(uint16_t &application_start) {
 static inline bool isReflashNecessary(uint32_t &i2c_application_timestamp) {
   uint32_t current_application_timestamp =
       readLatestApplicationTimestampFromInternalEeprom();
+
   i2c_application_timestamp =
       static_cast<uint32_t>(getWordFromSource(
           source_i2c_address_for_program, timestamp_application_byte_offset))
@@ -136,8 +143,10 @@ static inline bool isReflashNecessary(uint32_t &i2c_application_timestamp) {
 int main() {
 
   init();
+
   uint32_t i2c_application_timestamp;
   uint16_t application_start = 0;
+
   if (isReflashNecessary(i2c_application_timestamp) &&
       isCrcOk(source_i2c_address_for_program)) {
     eraseApplication();
@@ -146,6 +155,7 @@ int main() {
   } else {
     uint16_t address_in_external_eeprom = getWordFromSource(
         source_i2c_address_for_program, application_start_address_byte_offset);
+
     application_start = address_in_external_eeprom >> 8;
     application_start |= static_cast<uint8_t>(address_in_external_eeprom);
   }

@@ -18,8 +18,8 @@ uint8_t readByte(const uint8_t source_address,
   return data;
 }
 
-static inline uint16_t getWordFromSource(const uint8_t i2c_address,
-                                         const uint16_t data_address) {
+static uint16_t getWordFromSource(const uint8_t i2c_address,
+                                  const uint16_t data_address) {
   uint16_t result = static_cast<uint16_t>(readByte(i2c_address, data_address))
                     << 8;
   result |= static_cast<uint16_t>(readByte(i2c_address, data_address + 1));

@@ -63,22 +63,12 @@ static inline bool isCrcOk(const uint8_t i2c_address) {
           &crc);
     // LED_TOGGLE();
   }
-  /*
-  for (uint16_t pos = SPM_PAGESIZE -
-                      (static_cast<uint16_t>(writes + 1) *
-                       static_cast<uint16_t>(SPM_PAGESIZE)) %
-                          length;
-       pos < SPM_PAGESIZE; ++pos) {
-    uint16_t data = getWordFromSource(i2c_address, pos + start_address);
-    crc = crc32(crc, reinterpret_cast<uint8_t*>(&data));
-  }*/
 
-  uint32_t expected_crc = 0x4c9f71f9;
-
-  /*uint32_t expected_crc = static_cast<uint32_t>(getWordFromSource(i2c_address,
-  application_crc_should_index))<<16;
-  expected_crc |= static_cast<uint32_t>(getWordFromSource(i2c_address,
-  application_crc_should_index));*/
+  uint32_t expected_crc = static_cast<uint32_t>(getWordFromSource(
+                              i2c_address, application_crc_should_index))
+                          << 16;
+  expected_crc |= static_cast<uint32_t>(
+      getWordFromSource(i2c_address, application_crc_should_index + 2));
 
   if (crc == expected_crc) {
     status = true;

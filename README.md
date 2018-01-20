@@ -20,7 +20,7 @@ This will produce the miniboot.hex file you can then flash to your Arduino. The 
 automatically starts on a reset and looks for an I2C device at address 0x50 (CAT24M01's default address).
 
 It then reads the metadata header and it starts reflashing the microcontroller with the information
-stated there. It expects the following memory layout of the metadata in the (external) EEPROM:
+stated there. It expects the following memory layout of the metadata in the (external) I2C memory:
 
 - [last free byte pointer]          : 2 bytes - should point to first byte after the appplication. Ignored.
 - ['m' 'i' 'n' 'i' 'b' 'o' 'o' 't'] : 8 bytes.
@@ -59,9 +59,9 @@ is unprogrammed (4 bytes of 0xFF). This prevents a new rewrite on each system re
 
 The variable EEPROM_CONFIGURATION_START_BYTE can be edited to generate the desired macro in bootloader.h for the above logic.
 
-# Storing the application in the EEPROM
+# Storing the application in the external EEPROM
 
-To write an application to the I2C memory, one can use a USB to UART bridge.
+To write an application to the I2C EEPROM memory, one can use a USB to UART bridge.
 
 ## Prepare the UART to I2C Bridge
 

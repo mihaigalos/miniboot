@@ -29,7 +29,7 @@ void writeToInternalEeprom(const uint32_t data) {
 }
 #endif // #if 0
 
-void writeLatestApplicationTimestampToInternalEeprom(
+static inline void writeLatestApplicationTimestampToInternalEeprom(
     const uint32_t latest_timestamp) {
   eeprom_write_byte(
       reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE),
@@ -46,7 +46,7 @@ void writeLatestApplicationTimestampToInternalEeprom(
   boot_spm_busy_wait();
 }
 
-uint32_t readLatestApplicationTimestampFromInternalEeprom() {
+static inline uint32_t readLatestApplicationTimestampFromInternalEeprom() {
   uint32_t result =
       static_cast<uint32_t>(eeprom_read_byte(
           reinterpret_cast<uint8_t *>(EEPROM_CONFIGURATION_START_BYTE)))

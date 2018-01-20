@@ -4,9 +4,9 @@
 #include "io.h"
 #include <avr/wdt.h>
 
-static void initIO() { LED_INIT(); }
+static inline void initIO() { LED_INIT(); }
 
-static void disableWatchdog() {
+static inline void disableWatchdog() {
   wdt_reset();
   MCUSR = 0;
   WDTCSR |= (1 << WDCE) | (1 << WDE);
@@ -14,7 +14,7 @@ static void disableWatchdog() {
   asm("cli");
 }
 
-static void init() {
+static inline void init() {
   disableWatchdog();
   i2c_init();
   initIO();

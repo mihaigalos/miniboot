@@ -54,7 +54,7 @@ Computing the hexadecimal address for bootloader start section:
 
 After running, miniboot writes the application timestamp (specified earlier) to 4 bytes in the microcontroller's
 internal EEPROM. The next time the system restarts, it will compare the application's timestamp with the information
-it reads from the internal eeprom and will only rewrite it again if the timestamp is newer or the internal eeprom
+it reads from the internal eeprom and will only rewrite it again if the timestamp is different or the internal eeprom
 is unprogrammed (4 bytes of 0xFF). This prevents a new rewrite on each system restart.
 
 The variable EEPROM_CONFIGURATION_START_BYTE can be edited to generate the desired macro in bootloader.h for the above logic.

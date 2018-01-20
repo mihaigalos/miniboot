@@ -134,7 +134,7 @@ static inline bool isReflashNecessary(uint32_t &i2c_application_timestamp) {
 
   if (eeprom_not_programmed == current_application_timestamp)
     return true;
-  if (i2c_application_timestamp > current_application_timestamp)
+  if (i2c_application_timestamp != current_application_timestamp)
     return true;
   return false;
 }

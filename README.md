@@ -45,9 +45,9 @@ fits in the section you specify with the Hi fuse.
 
 Computing the hexadecimal address for bootloader start section:
 - make clean; make main.hex; take output, let's say it's 2123 (or similar)
-- for the size of your device (8kb = 1024 * 8 = 8192) minus above value 2123... = 6069
-- Which yelds 6069 / 64 (mega328p page size in bytes) = 94.828125 pages of flash memory
-- round it down to 94 - our new bootloader address is 94 * 64 = 6016, in hex = 1780h
+- for the size of your device (32kB = 1024 * 32 = 32768 bytes) minus above value 2123... = 30645
+- Which yelds 30645 / 128 (128 = mega328p page size in bytes) = 239.41 pages of flash memory
+- round it down to 239 - our new bootloader address is 239 * 128 = 30592, in hex = 7780h
 - put the value in the BOOTLOADER_START_ADDRESS macro in the Makefile of manually edit bootloader.h
 
 # Internal EEPROM last application timestamp

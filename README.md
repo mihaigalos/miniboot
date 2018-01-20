@@ -5,6 +5,14 @@ It is an I2C bootloader for Arduino, tested on AtMega328p. It is designed to ref
 the Mega328p with code residing in an external I2C memory or another I2C device. For testing,
 CAT24M01 1Mbit (128kByte) external EEPROM was used.
 
+# Requirements
+
+Miniboot depends on [I2C-master-lib](https://github.com/g4lvanix/I2C-master-lib/) for I2C communication and [Drivers](https://github.com/mihaigalos/Drivers/) for CRC32 computation and EEPROM access.
+
+` $ avr-size.exe miniboot.hex
+  text  data     bss    dec     hex   filename
+  0     1944     0      1944    798   miniboot.hex`
+
 # Usage
 
 ## Get the sources

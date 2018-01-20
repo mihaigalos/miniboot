@@ -23,13 +23,13 @@ It then reads the metadata header and it starts reflashing the microcontroller w
 stated there. It expects the following memory layout of the metadata in the (external) EEPROM:
 
 - [last free byte pointer]          : 2 bytes - should point to first byte after the appplication. Ignored.
-- ['m' 'i' 'n' 'i' 'b' 'o' 'o' 't'] : 8 bytes
-- [name of application]             : 10 bytes - user defined
-- [timestamp application]           : 4 bytes - unix timestamp when the application in the I2C memory was generated
-- [timestamp of write]              : 4 bytes - unix timestamp when the application was flashed to the I2c memory
+- ['m' 'i' 'n' 'i' 'b' 'o' 'o' 't'] : 8 bytes.
+- [name of application]             : 10 bytes - user defined.
+- [timestamp application]           : 4 bytes - unix timestamp when the application in the I2C memory was generated.
+- [timestamp of write]              : 4 bytes - unix timestamp when the application was flashed to the I2c memory.
 - [CRC32]                           : 4 bytes - generated with polynomial representation 0xEDB88320. Details in Drivers/CRC.
-- [length]                          : 2 bytes - amount of bytes for the application
-- [application]                     : n bytes - actual payload of the application code
+- [length]                          : 2 bytes - amount of bytes for the application.
+- [application]                     : n bytes - actual payload of the application code.
 
 Miniboot computes a CRC32 checksum on the payload, excuding the header metadata and starting with the first byte of
 the application.

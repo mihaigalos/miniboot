@@ -60,12 +60,16 @@ is unprogrammed (4 bytes of 0xFF). This prevents a new rewrite on each system re
 The variable EEPROM_CONFIGURATION_START_BYTE can be edited to generate the desired macro in bootloader.h for the above logic.
 
 # Storing the application in the EEPROM
-This section, along with the Drivers/ folder is not part of miniboot per se, and is here purely for technical documentation.
 
 To write an application to the I2C memory, one can use a USB to UART bridge.
-The arduino needs to be flashed with the e2prom sketch which can be found in the Drivers/Eeprom/ folder in this repo.
 
-Export the hex file of the application (you want to transfer to the I2C memory) to binary before continuing:
+## Prepare the UART to I2C Bridge
+
+The arduino needs to be flashed with the miniboot_uart_to_eeprom_uploader.hex sketch which can be found in the Drivers/Eeprom/bin folder in this repo. This will read from the UART and will put the information in the external I2C memory.
+
+## Create the binary file
+
+Next, export the hex file of the application (the one you want to transfer to the I2C memory) to binary before continuing:
 
 `avr-objcopy.exe -I ihex application.hex -O binary application.bin`
 
@@ -73,13 +77,22 @@ We finally want to send it over UART to the microcontroller which will write it 
 
 Br@y's Terminal is broken when using the send file feature.
 Use YAT Terminal to send the file via UART instead.
-YAT tries to parse the \r\n sequence when sending, which leads to an error being shown and the transmission is interrupted, the file is not fully sent.
-To overcome this, go to Terminal->Settings->select Terminal Type: binary. Selecte Binary Settings... and uncheck everythig.
+
+In YAT, go to Terminal->Settings and select your baudrate:
 
 - If your Arduino is running at 16Mhz : select 600 bits per second.
 - If your Arduino is running at 8Mhz or have a custom board runing at 8Mhz: select 300 bits per second.
 
 The low baudrate ensures the external EEPROM has time to write the payload it receives.
+
+Follow the instructions to input the application unix timestamp, the unix timestamp of the time of writing, crc value and the data length.
+For the unix timestamp, you can use the [epoch converter](https://www.epochconverter.com/).
+For computing the crc32 on your binary file, drag and drop application.bin created earlier in the webpage found [here](http://emn178.github.io/online-tools/crc32_checksum.html).
+
+You will next be prompted to switch to binary mode and send the binary file.
+
+YAT tries to parse the \r\n sequence when sending, which leads to an error being shown and the transmission is interrupted, the file is not fully sent.
+To overcome this, ->select Terminal Type: binary. Select Binary Settings... and uncheck everythig.
 
 Next select the exported binary file (application.bin) and click Send File.
 

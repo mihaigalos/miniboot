@@ -27,17 +27,13 @@ stated there. It expects the following memory layout in the EEPROM:
 - [name of application]             : 10 bytes - user defined
 - [timestamp application]           : 4 bytes - unix timestamp when the application in the I2C memory was generated
 - [timestamp of write]              : 4 bytes - unix timestamp when the application was flashed to the I2c memory
-- [CRC]                             : 4 bytes - ignore for the moment, not used
+- [CRC32]                           : 4 bytes - generated with polynomial representation 0xEDB88320. Details in Drivers/CRC.
 - [length]                          : 2 bytes - amount of bytes for the application
 - [application]                     : n bytes - actual payload of the application code
 
-As a side note, the length and actual applicatin are the most important bytes. Other bytes may be ignored, it is
-however important that the length be at byte location 32 and the application start at byte 34.
-
-After the reflash, miniboot writes the application timestamp (specified earlier) to 4 bytes in the microcontroller's
-internal EEPROM. The next time the system restarts, it will compare the application's timestamp with the information
-it reads from the internal eeprom and will only rewrite it again if the timestamp is newer or the internal eeprom
-is unprogrammed (4 bytes of 0xFF). This prevents a new rewrite on each system restart.
+Miniboot computes a CRC32 checksum on the payload, excuding the header metadata and starting with the first byte of
+the application.
+It is important that the length be at byte location 32 and the application start at byte 34.
 
 # Bootloader start address
 
@@ -53,6 +49,15 @@ Computing the hexadecimal address for bootloader start section:
 - Which yelds 6069 / 64 (mega328p page size in bytes) = 94.828125 pages of flash memory
 - round it down to 94 - our new bootloader address is 94 * 64 = 6016, in hex = 1780h
 - put the value in the BOOTLOADER_START_ADDRESS macro in the Makefile of manually edit bootloader.h
+
+# Internal EEPROM last application timestamp
+
+After running, miniboot writes the application timestamp (specified earlier) to 4 bytes in the microcontroller's
+internal EEPROM. The next time the system restarts, it will compare the application's timestamp with the information
+it reads from the internal eeprom and will only rewrite it again if the timestamp is newer or the internal eeprom
+is unprogrammed (4 bytes of 0xFF). This prevents a new rewrite on each system restart.
+
+The variable EEPROM_CONFIGURATION_START_BYTE can be edited to generate the desired macro in bootloader.h for the above logic.
 
 # Storing the application in the EEPROM
 This section, along with the Drivers/ folder is not part of miniboot per se, and is here purely for technical documentation.

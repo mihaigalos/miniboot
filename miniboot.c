@@ -44,7 +44,6 @@ static inline bool isCrcOk(const uint8_t i2c_address) {
   uint32_t crc = 0;
   uint16_t start_address = getDataStartAddressInSource(i2c_address);
   uint16_t length = getDataLength(i2c_address);
-  uint8_t writes = 0;
 
   uint32_t table[crc_table_size];
   init_table(&table[0]);

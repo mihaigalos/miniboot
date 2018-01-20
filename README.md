@@ -73,6 +73,7 @@ Next, export the hex file of the application (the one you want to transfer to th
 
 `avr-objcopy.exe -I ihex application.hex -O binary application.bin`
 
+## Send it!
 We finally want to send it over UART to the microcontroller which will write it to the I2C memory.
 
 Br@y's Terminal is broken when using the send file feature.

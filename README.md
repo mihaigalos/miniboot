@@ -20,7 +20,7 @@ This will produce the miniboot.hex file you can then flash to your Arduino. The 
 automatically starts on a reset and looks for an I2C device at address 0x50 (CAT24M01's default address).
 
 It then reads the metadata header and it starts reflashing the microcontroller with the information
-stated there. It expects the following memory layout of the metadata in the EEPROM:
+stated there. It expects the following memory layout of the metadata in the (external) EEPROM:
 
 - [last free byte pointer]          : 2 bytes - should point to first byte after the appplication
 - ['m' 'i' 'n' 'i' 'b' 'o' 'o' 't'] : 8 bytes

@@ -14,7 +14,6 @@ Size requirements are <2kBytes. AtMega328p's 4kBytes RAM Should be enough, actua
 $ avr-size -B miniboot.elf
    text    data     bss     dec     hex filename
    1944       0       0    1944     798 miniboot.elf
-
 ```
 
 # Usage

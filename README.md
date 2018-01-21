@@ -11,10 +11,10 @@ Miniboot depends on [I2C-master-lib](https://github.com/g4lvanix/I2C-master-lib/
 
 Size requirements are <2kBytes. AtMega328p's 4kBytes RAM Should be enough, actual stack usage is way lower than that anyway.
 ```
-$ avr-size.exe miniboot.hex
+$ avr-size -B miniboot.elf
+   text    data     bss     dec     hex filename
+   1944       0       0    1944     798 miniboot.elf
 
-text  data     bss    dec     hex   filename
-0     1944     0      1944    798   miniboot.hex
 ```
 
 # Usage

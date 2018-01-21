@@ -73,7 +73,7 @@ The variable EEPROM_CONFIGURATION_START_BYTE can be edited to generate the desir
 
 # Storing the application in the external EEPROM
 
-To write an application to the I2C EEPROM memory, one can use a USB to UART bridge.
+To write an application to the I2C EEPROM memory (so it can be later flashed by miniboot), one can use a USB to UART bridge.
 
 ## Prepare the UART to I2C Bridge
 

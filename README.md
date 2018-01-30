@@ -95,7 +95,7 @@ In YAT, go to Terminal->Settings and select your baudrate:
 - If your Arduino is running at 16Mhz : select 600 bits per second.
 - If your Arduino is running at 8Mhz or have a custom board runing at 8Mhz: select 300 bits per second.
 
-The low baudrate ensures the external EEPROM has time to write the payload it receives.
+The low baudrate ensures the external EEPROM has time to write the payload it receives, since the communication is asynchronous.
 
 Follow the instructions to input the application unix timestamp, the unix timestamp of the time of writing, crc value and the data length.
 For the unix timestamp, you can use the [epoch converter](https://www.epochconverter.com/).

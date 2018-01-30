@@ -42,7 +42,7 @@ stated there. It expects the following memory layout of the metadata in the (ext
 - [length]                          : 2 bytes - amount of bytes for the application.
 - [application]                     : n bytes - actual payload of the application code.
 
-Miniboot computes a CRC32 checksum on the payload, excuding the header metadata and starting with the first byte of
+Miniboot computes a CRC32 checksum on the payload, excluding the header metadata and starting with the first byte of
 the application.
 It is important that the length be at byte location 32 and the application start at byte 34.
 
@@ -55,7 +55,7 @@ the bootloader section (Hi fuse : 0xD8). If you choose to modify miniboot, pleas
 fits in the section you specify with the Hi fuse.
 
 Computing the hexadecimal address for bootloader start section:
-- make clean; make main.hex; take output, let's say it's 2123 (or similar)
+- make clean; make rebuild; take output, let's say it's 2123 (or similar)
 - for the size of your device (32kB = 1024 * 32 = 32768 bytes) minus above value 2123... = 30645
 - Which yelds 30645 / 128 (128 = mega328p page size in bytes) = 239.41 pages of flash memory
 - round it down to 239 - our new bootloader address is 239 * 128 = 30592, in hex = 7780h
@@ -66,7 +66,7 @@ Computing the hexadecimal address for bootloader start section:
 After running, miniboot writes the application timestamp (specified earlier) to 4 bytes in the microcontroller's
 internal EEPROM. The next time the system restarts, it will compare the application's timestamp with the information
 it reads from the internal eeprom and will only rewrite it again if the timestamp is different or the internal eeprom
-is unprogrammed (4 bytes of 0xFF). This prevents a new rewrite on each system restart.
+is unprogrammed (4 bytes of 0xFF). This prevents a new unnecessary rewrite on each system restart.
 
 The variable EEPROM_CONFIGURATION_START_BYTE can be edited to generate the desired macro in bootloader.h for the above logic.
 
@@ -99,12 +99,12 @@ The low baudrate ensures the external EEPROM has time to write the payload it re
 
 Follow the instructions to input the application unix timestamp, the unix timestamp of the time of writing, crc value and the data length.
 For the unix timestamp, you can use the [epoch converter](https://www.epochconverter.com/).
-For computing the crc32 on your binary file, drag and drop application.bin created earlier in the webpage found [here](http://emn178.github.io/online-tools/crc32_checksum.html).
+For computing the crc32 on your binary file, drag and drop the application.bin created earlier in the webpage found [here](http://emn178.github.io/online-tools/crc32_checksum.html).
 
 You will next be prompted to switch to binary mode and send the binary file.
 
 YAT tries to parse the \r\n sequence when sending, which leads to an error being shown and the transmission is interrupted, the file is not fully sent.
-To overcome this, ->select Terminal Type: binary. Select Binary Settings... and uncheck everythig.
+To overcome this, ->select Terminal Type: binary. Select Binary Settings... and uncheck everything.
 
 Next select the exported binary file (application.bin) and click Send File.
 

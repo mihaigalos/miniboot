@@ -50,7 +50,7 @@ It is important that the length be at byte location 32 and the application start
 
 Miniboot can be modified to place the bootloader code at a specific address, via
 the macro BOOTLOADER_START_ADDRESS. Please ensure that the address lies in the bootloader
-section, specified by the High fusebits. I reccommend using at least 1024 words (2048 bytes) for
+section, specified by the High fusebits. I recommend using at least 1024 words (2048 bytes) for
 the bootloader section (Hi fuse : 0xD8). If you choose to modify miniboot, please ensure that your new bootloader
 fits in the section you specify with the Hi fuse.
 
@@ -85,6 +85,9 @@ Next, export the hex file of the application (the one you want to transfer to th
 `avr-objcopy.exe -I ihex application.hex -O binary application.bin`
 
 ## Send it!
+
+`Disclaimer: I'm using Windows. Sigh.`
+
 We finally want to send it over UART to the microcontroller which will write it to the I2C memory.
 
 Br@y's Terminal is broken when using the send file feature.

@@ -1,3 +1,4 @@
 *.tmp
 *.map
 *.elf
+/get_metadata/node_modules

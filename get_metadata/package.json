@@ -1,0 +1,24 @@
+{
+  "name": "miniboot-metadata-generator",
+  "version": "0.1.0",
+  "description": "Generates Metadata necessary on the EEPROM for Miniboot sketch auto-update",
+  "main": "get_metadata.js",
+  "scripts": {
+    "start": "node get_metadata.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Ranjit Bhinge",
+  "license": "ISC",
+  "homepage": "",
+  "dependencies": {
+    "buffer-crc32": "^0.2.13",
+    "fast-crc32c": "^1.0.4",
+    "fs": "",
+    "lodash": "^4.17.4",
+    "prompt-console": ""
+  }
+}

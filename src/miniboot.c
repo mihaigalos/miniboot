@@ -112,8 +112,7 @@ static inline void writeFlashFromI2C(const uint8_t i2c_address,
   LED_OFF();
 }
 
-static void leaveBootloader(uint16_t &application_start)
-    __attribute__((__noreturn__));
+[[ noreturn ]]
 static inline void leaveBootloader(uint16_t &application_start) {
   // hold my beer and watch this!
   reinterpret_cast<void (*)(void)>(application_start)();

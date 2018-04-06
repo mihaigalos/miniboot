@@ -1,3 +1,10 @@
-*.tmp
+*.hex
 *.map
+*.eep
 *.elf
+*.lss
+*.lst
+*.o
+*.sym
+*.tmp
+src/.dep

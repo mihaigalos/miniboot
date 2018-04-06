@@ -113,5 +113,17 @@ Next select the exported binary file (application.bin) and click Send File.
 
 You should now be able to send the file in full.
 
+## No global variables
+
+Miniboot uses no global variables. This you can call bootloader functions from the application,
+without worrying that the application's variables will get overwritten by the bootloader code.
+
+Why should you care, you may ask? Well, if you find you need to compile and link functions which are
+already present in miniboot, you can just call them from your application to miniboot, potentially
+reducing the application size.
+
+More details in Section # 14 (Can the application use code built into the bootloader) of doc/bootloader_faq.pdf
+or [AvrFreaks](https://www.avrfreaks.net/sites/default/files/bootloader_faq.pdf).
+
 # License
 This software is freely available under the GNU GPL v3.0 aegis, please consult the LICENSE file for further information.

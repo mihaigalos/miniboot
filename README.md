@@ -93,6 +93,13 @@ We finally want to send it over UART to the microcontroller which will write it 
 Br@y's Terminal is broken when using the send file feature.
 Use YAT Terminal to send the file via UART instead.
 
+
+```
+In this step, the metadata *and* the payload will be send over to the MCU. The metadata needs to be
+input by the user, when prompted. Without proper setup of the metadata (i.e. : timestamp and CRC),
+the payload will be ignored by miniboot and not be reflashed.
+```
+
 In YAT, go to Terminal->Settings and select your baudrate:
 
 - If your Arduino is running at 16Mhz : select 600 bits per second.
@@ -126,4 +133,5 @@ More details in Section # 14 (Can the application use code built into the bootlo
 or [AvrFreaks](https://www.avrfreaks.net/sites/default/files/bootloader_faq.pdf).
 
 # License
+
 This software is freely available under the GNU GPL v3.0 aegis, please consult the LICENSE file for further information.

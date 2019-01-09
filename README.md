@@ -72,15 +72,9 @@ The variable EEPROM_CONFIGURATION_START_BYTE can be edited to generate the desir
 
 # Storing the application in the external EEPROM
 
-To write an application to the I2C EEPROM memory (so it can be later flashed by miniboot), one can use a USB to UART bridge.
-
-## Prepare the UART to I2C Bridge
-
-The arduino needs to be flashed with the miniboot_uart_to_eeprom_uploader.hex sketch which can be found in the Drivers/Eeprom/bin folder in this repo. This will read from the UART and will put the information in the external I2C memory.
-
 ## Create the binary file
 
-Next, export the hex file of the application (the one you want to transfer to the I2C memory) to binary before continuing:
+Export the hex file of the application (the one you want to transfer to the I2C memory) to binary before continuing:
 
 `avr-objcopy.exe -I ihex application.hex -O binary application.bin`
 
@@ -110,6 +104,10 @@ flash the MCU with it. Once it runs successfuly, you will have the code in the e
 Br@y's Terminal is broken when using the send file feature.
 Use YAT Terminal to send the file via UART instead.
 
+First, the Arduino board needs to be flashed with the miniboot_uart_to_eeprom_uploader.hex sketch which can be found in the Drivers/Eeprom/bin folder in this repo. This will read from the UART and will put the information in the external I2C memory.
+
+At this point, you will need a USB to UART bridge.
+
 In YAT, go to Terminal->Settings and select your baudrate:
 
 - If your Arduino is running at 16Mhz : select 600 bits per second.
@@ -117,7 +115,7 @@ In YAT, go to Terminal->Settings and select your baudrate:
 
 The low baudrate ensures the external EEPROM has time to write the payload it receives, since the communication is asynchronous.
 
-Follow the instructions to input the application unix timestamp, the unix timestamp of the time of writing, crc value and the data length.
+When asked to do so, follow the instructions to input the application unix timestamp, the unix timestamp of the time of writing, crc value and the data length.
 For the unix timestamp, you can use the [epoch converter](https://www.epochconverter.com/).
 For computing the crc32 on your binary file, drag and drop the application.bin created earlier in the webpage found [here](http://emn178.github.io/online-tools/crc32_checksum.html).
 

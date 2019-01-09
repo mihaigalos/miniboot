@@ -85,9 +85,12 @@ Export the hex file of the application (the one you want to transfer to the I2C 
 We finally want to send it over to the microcontroller which will write it to the I2C memory.
 
 You may choose to use the UART method or the Monolithic Binary Method.
+
+* The Monolithic Binary Method: creates a sketch with Arduino which contains a copy-pasted version of the application.hex and its associated metadata filled in manually.
 * The UART Method: uses `YAT Terminal` to fill in the application payload and metadata in the external
 EEPROM.
-* The Monolithic Binary Method: creates a sketch with Arduino which contains a copy-pasted version of the application.hex and its associated metadata filled in manually.
+
+I personally think the UART Method is easier and more generic.
 
 ```
 Please be aware, the metadata needs to be present alongside the payload. Without proper setup of the
@@ -109,7 +112,7 @@ Use YAT Terminal to send the file via UART instead.
 
 First, the Arduino board needs to be flashed with the miniboot_uart_to_eeprom_uploader.hex sketch which can be found in the Drivers/Eeprom/bin folder in this repo. This will read from the UART and will put the information in the external I2C memory.
 
-At this point, you will need a USB to UART bridge.
+At this point, you will need a USB to UART bridge hooked up to your Arduino's UART.
 
 In YAT, go to Terminal->Settings and select your baudrate:
 

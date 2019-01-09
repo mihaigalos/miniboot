@@ -82,24 +82,27 @@ Export the hex file of the application (the one you want to transfer to the I2C 
 
 `Disclaimer: I'm using Windows. Sigh.`
 
-We finally want to send it over UART to the microcontroller which will write it to the I2C memory.
+We finally want to send it over to the microcontroller which will write it to the I2C memory.
 
-You may choose to use YAT Terminal to fill in the application payload and metadata in the external
-EEPROM, or create a sketch with Arduino which writes the metadata and the payload there.
+You may choose to use the UART method or the Monolithic Binary Method.
+* The UART Method: uses `YAT Terminal` to fill in the application payload and metadata in the external
+EEPROM.
+* The Monolithic Binary Method: creates a sketch with Arduino which contains a copy-pasted version of the application.hex and its associated metadata filled in manually.
 
 ```
-In this step, the metadata *and* the payload will be sent over to the MCU. The metadata needs to be
-present alongside the payload. Without proper setup of the metadata (i.e. : timestamp and CRC),
-the payload will be ignored by miniboot and not be reflashed.
+Please be aware, the metadata needs to be present alongside the payload. Without proper setup of the
+metadata (i.e. : timestamp and CRC), the payload will be ignored by miniboot and not be reflashed.
 ```
 
-### When not using YAT
+### The Monolithic Binary Method
 
-You can compose your metadata by hand and using my [eeprom](https://github.com/mihaigalos/Drivers/tree/master/Eeprom/src) driver, store both the metadata
-and the payload in the external I2C, for miniboot to use. You need to compile the example sketch and
+Don't let the name scare you. :grinning:
+
+You can compose your metadata by hand, using my [eeprom](https://github.com/mihaigalos/Drivers/tree/master/Eeprom/src) driver, store both the metadata
+and the payload in the external I2C, for miniboot to use. Have a look at the `blink_hex` variable in [intel_hex.cpp](https://github.com/mihaigalos/Drivers/blob/master/Eeprom/src/intel_hex.cpp). You need to compile the example sketch and
 flash the MCU with it. Once it runs successfuly, you will have the code in the external I2C EEPROM.
 
-### When using YAT
+### The UART Method
 
 Br@y's Terminal is broken when using the send file feature.
 Use YAT Terminal to send the file via UART instead.

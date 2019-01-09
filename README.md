@@ -90,15 +90,25 @@ Next, export the hex file of the application (the one you want to transfer to th
 
 We finally want to send it over UART to the microcontroller which will write it to the I2C memory.
 
-Br@y's Terminal is broken when using the send file feature.
-Use YAT Terminal to send the file via UART instead.
-
+You may choose to use YAT Terminal to fill in the application payload and metadata in the external
+EEPROM, or create a sketch with Arduino which writes the metadata and the payload there.
 
 ```
-In this step, the metadata *and* the payload will be send over to the MCU. The metadata needs to be
-input by the user, when prompted. Without proper setup of the metadata (i.e. : timestamp and CRC),
+In this step, the metadata *and* the payload will be sent over to the MCU. The metadata needs to be
+present alongside the payload. Without proper setup of the metadata (i.e. : timestamp and CRC),
 the payload will be ignored by miniboot and not be reflashed.
 ```
+
+### When not using YAT
+
+You can compose your metadata by hand and using my [eeprom](https://github.com/mihaigalos/Drivers/tree/master/Eeprom/src) driver, store both the metadata
+and the payload in the external I2C, for miniboot to use. You need to compile the example sketch and
+flash the MCU with it. Once it runs successfuly, you will have the code in the external I2C EEPROM.
+
+### When using YAT
+
+Br@y's Terminal is broken when using the send file feature.
+Use YAT Terminal to send the file via UART instead.
 
 In YAT, go to Terminal->Settings and select your baudrate:
 

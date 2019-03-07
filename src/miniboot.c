@@ -21,8 +21,7 @@ static inline void writeToFlash(const uint16_t address, uint8_t *data,
                                 uint16_t &application_start) {
 
   if (0 == address) {
-    application_start = static_cast<uint8_t>(
-        static_cast<uint16_t>(data[RESET_VECTOR_ARGUMENT_ADDRESS] << 8));
+    application_start = static_cast<uint16_t>(data[RESET_VECTOR_ARGUMENT_ADDRESS]) << 8;
     application_start |=
         static_cast<uint8_t>(data[RESET_VECTOR_ARGUMENT_ADDRESS + 1]);
 

@@ -20,7 +20,7 @@ static inline uint16_t getDataLength(const uint8_t i2c_address) {
 static inline void writeToFlash(const uint16_t address, uint8_t *data,
                                 uint16_t &application_start) {
 
-  if (0 == address) {
+  if (0 == address && 0 == application_start) {
     application_start = static_cast<uint16_t>(data[RESET_VECTOR_ARGUMENT_ADDRESS]) << 8;
     application_start |=
         static_cast<uint8_t>(data[RESET_VECTOR_ARGUMENT_ADDRESS + 1]);
@@ -85,7 +85,7 @@ static inline void writeFlashFromI2C(const uint8_t i2c_address,
   uint16_t start_address = getDataStartAddressInSource(i2c_address);
   uint16_t length = getDataLength(i2c_address);
   uint8_t buf[SPM_PAGESIZE];
-  uint8_t writes = 0;
+  uint16_t writes = 0;
 
   for (uint16_t pos = 0; pos < length; pos += 2) {
     if (pos > 0 && (0 == (pos % SPM_PAGESIZE))) {

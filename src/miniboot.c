@@ -9,36 +9,20 @@
 #include "i2c_communication.h"
 #include "init.h"
 
-static inline uint16_t getDataStartAddressInSource(const uint8_t i2c_address) {
+#include "miniboot.h"
+#include "kernel.h"
+
+
+uint16_t Miniboot::getDataStartAddressInSource(const uint8_t i2c_address) {
   return application_byte_offset;
 }
 
-static inline uint16_t getDataLength(const uint8_t i2c_address) {
+uint16_t Miniboot::getDataLength(const uint8_t i2c_address) {
   return getWordFromSource(i2c_address, application_length_byte_offset);
 }
 
-static inline void writeToFlash(const uint16_t address, uint8_t *data,
-                                uint16_t &application_start) {
 
-  if (0 == address && 0 == application_start) {
-    application_start = static_cast<uint16_t>(data[RESET_VECTOR_ARGUMENT_ADDRESS]) << 8;
-    application_start |=
-        static_cast<uint8_t>(data[RESET_VECTOR_ARGUMENT_ADDRESS + 1]);
-
-    data[RESET_VECTOR] = static_cast<uint8_t>(jmp_instruction);
-    data[RESET_VECTOR + 1] = static_cast<uint8_t>(jmp_instruction >> 8);
-
-    data[RESET_VECTOR_ARGUMENT_ADDRESS] = static_cast<uint8_t>(
-        static_cast<uint16_t>(BOOTLOADER_START_ADDRESS) / 2);
-    data[RESET_VECTOR_ARGUMENT_ADDRESS + 1] = static_cast<uint8_t>(
-        (static_cast<uint16_t>(BOOTLOADER_START_ADDRESS) / 2) >> 8);
-  }
-
-  writeToPageBuffer(address, data);
-  writePageBufferToFlash(address);
-}
-
-static inline bool isCrcOk(const uint8_t i2c_address) {
+bool Miniboot::isCrcOk(const uint8_t i2c_address) {
   bool status = false;
   uint32_t crc = 0;
   uint16_t start_address = getDataStartAddressInSource(i2c_address);
@@ -80,46 +64,8 @@ static inline bool isCrcOk(const uint8_t i2c_address) {
   return status;
 }
 
-static inline void writeFlashFromI2C(const uint8_t i2c_address,
-                                     uint16_t &application_start) {
-  uint16_t start_address = getDataStartAddressInSource(i2c_address);
-  uint16_t length = getDataLength(i2c_address);
-  uint8_t buf[SPM_PAGESIZE];
-  uint16_t writes = 0;
 
-  for (uint16_t pos = 0; pos < length; pos += 2) {
-    if (pos > 0 && (0 == (pos % SPM_PAGESIZE))) {
-      writeToFlash(writes * SPM_PAGESIZE, &buf[0], application_start);
-      LED_TOGGLE();
-      ++writes;
-    }
-    uint16_t data = getWordFromSource(i2c_address, pos + start_address);
-    buf[pos % SPM_PAGESIZE] = static_cast<uint8_t>(data >> 8);
-    buf[(pos + 1) % SPM_PAGESIZE] = static_cast<uint8_t>(data);
-  }
-
-  for (uint16_t pos = SPM_PAGESIZE -
-                      (static_cast<uint16_t>(writes + 1) *
-                       static_cast<uint16_t>(SPM_PAGESIZE)) %
-                          length;
-       pos < SPM_PAGESIZE; ++pos) {
-    buf[pos] = 0xFF; // reset contents, since these bytes were not filled in
-                     // this page and have value from previous page
-  }
-
-  writeToFlash(writes * SPM_PAGESIZE, &buf[0], application_start);
-  LED_OFF();
-}
-
-[[ noreturn ]]
-static inline void leaveBootloader(uint16_t &application_start) {
-  // hold my beer and watch this!
-  reinterpret_cast<void (*)(void)>(application_start)();
-  while (1)
-    ;
-}
-
-static inline bool isReflashNecessary(uint32_t &i2c_application_timestamp) {
+bool Miniboot::isReflashNecessary(uint32_t &i2c_application_timestamp) {
   uint32_t current_application_timestamp =
       readLatestApplicationTimestampFromInternalEeprom();
 
@@ -138,16 +84,16 @@ static inline bool isReflashNecessary(uint32_t &i2c_application_timestamp) {
 }
 
 int main() {
-
+  Miniboot miniboot;
   init();
 
   uint32_t i2c_application_timestamp;
   uint16_t application_start = 0;
 
-  if (isReflashNecessary(i2c_application_timestamp) &&
-      isCrcOk(source_i2c_address_for_program)) {
+  if (miniboot.isReflashNecessary(i2c_application_timestamp) &&
+      miniboot.isCrcOk(source_i2c_address_for_program)) {
     eraseApplication();
-    writeFlashFromI2C(source_i2c_address_for_program, application_start);
+    miniboot.writeFlashFromI2C(source_i2c_address_for_program, application_start);
     writeLatestApplicationTimestampToInternalEeprom(i2c_application_timestamp);
   } else {
     uint16_t address_in_external_eeprom = getWordFromSource(
@@ -156,7 +102,7 @@ int main() {
     application_start = address_in_external_eeprom >> 8;
     application_start |= static_cast<uint8_t>(address_in_external_eeprom);
   }
-  leaveBootloader(application_start);
+  miniboot.leaveBootloader(application_start);
 
   return 0;
 }

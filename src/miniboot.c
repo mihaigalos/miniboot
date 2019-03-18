@@ -154,7 +154,7 @@ int main() {
         source_i2c_address_for_program, application_start_address_byte_offset);
 
     application_start = address_in_external_eeprom >> 8;
-    application_start |= static_cast<uint8_t>(address_in_external_eeprom);
+    application_start |= static_cast<uint16_t>(static_cast<uint8_t>(address_in_external_eeprom))<<8;
   }
   leaveBootloader(application_start);
 

@@ -136,7 +136,7 @@ You should now be able to send the file in full.
 
 ## No global variables
 
-Miniboot uses no global variables. This you can call bootloader functions from the application,
+Miniboot uses no global variables. Thus you can call bootloader functions from the application,
 without worrying that the application's variables will get overwritten by the bootloader code.
 
 Why should you care, you may ask? Well, if you find you need to compile and link functions which are

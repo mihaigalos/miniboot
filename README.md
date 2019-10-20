@@ -81,6 +81,7 @@ Export the hex file of the application (the one you want to transfer to the I2C 
 ## Send it!
 
 `Disclaimer: I'm using Windows. Sigh.`
+![alt text](memes/cry.jpg "Why?!")
 
 We finally want to send it over to the microcontroller which will write it to the I2C memory.
 

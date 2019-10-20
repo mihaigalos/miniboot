@@ -9,7 +9,7 @@ CAT24M01 1Mbit (128kByte) external EEPROM was used.
 
 Miniboot depends on [I2C-master-lib](https://github.com/g4lvanix/I2C-master-lib/) for I2C communication and [Drivers](https://github.com/mihaigalos/Drivers/) for CRC32 computation and EEPROM access.
 
-Size requirements are <2kBytes. AtMega328p's 4kBytes RAM Should be enough, actual stack usage is way lower than that anyway.
+Size requirements are <2kBytes. AtMega328p's 4kBytes RAM should be enough, actual stack usage is way lower than that anyway.
 ```
 $ avr-size -B miniboot.elf
    text    data     bss     dec     hex filename
@@ -57,7 +57,7 @@ fits in the section you specify with the Hi fuse.
 Computing the hexadecimal address for bootloader start section:
 - make clean; make rebuild; take output, let's say it's 2123 (or similar)
 - for the size of your device (32kB = 1024 * 32 = 32768 bytes) minus above value 2123... = 30645
-- Which yelds 30645 / 128 (128 = mega328p page size in bytes) = 239.41 pages of flash memory
+- Which yields 30645 / 128 (128 = mega328p page size in bytes) = 239.41 pages of flash memory
 - round it down to 239 - our new bootloader address is 239 * 128 = 30592, in hex = 7780h
 - put the value in the BOOTLOADER_START_ADDRESS macro in the Makefile of manually edit bootloader.h
 
@@ -80,7 +80,7 @@ Export the hex file of the application (the one you want to transfer to the I2C 
 
 ## Send it!
 
-`Disclaimer: I'm using Windows. Sigh.`
+`Disclaimer: At the time of this posting, I was using Windows. Sigh.`
 ![alt text](memes/cry.jpg "Why?!")
 
 We finally want to send it over to the microcontroller which will write it to the I2C memory.
@@ -137,7 +137,7 @@ You should now be able to send the file in full.
 
 ## No global variables
 
-Miniboot uses no global variables. This you can call bootloader functions from the application,
+Miniboot uses no global variables. Thus you can call bootloader functions from the application,
 without worrying that the application's variables will get overwritten by the bootloader code.
 
 Why should you care, you may ask? Well, if you find you need to compile and link functions which are

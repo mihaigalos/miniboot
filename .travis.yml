@@ -12,10 +12,14 @@ matrix:
     env:
     - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 before_install:
-- eval "${MATRIX_EVAL}"
+  - eval "${MATRIX_EVAL}"
 script:
-- cd src/
-- make all
+  - cd src/
+  - make all
+  - curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
+    -d "{\"body\": \"Hello world\"}" \
+    "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
+
 env:
   global:
     secure: YPqjhyeSm13L0N8/vcbG05vDwO7MgthOgK7ZVKDq9+/q/H7EJYHBVRQw5+cQ41TrbdwbXM3Jd0aABMPWscP7+/gVzEbCQGWsFYVc0Jgi8SWK2j3/xO4n78YUR6bqYP090tYM17VmPjT2BrPFpBGBPnf3kYNXcqsUsZIr72QHsMKzXPCy+7qUEONMzVC/H596RfEl9vxq6pN/NttfmZt9P+CTAA/s3yodBFJaxdXpwrUo9tUeGZHODPt/yO1LoYti5JSZhqbqqWdBwfO63yJA4vM/LogogHGiHogVmNP37QkdAZHVXmjqGzVK/qgEPU+o2sBcIPE4UlPbXe6lzrTtU6fw64Y5MvjLIknqjNOoYVRc8QtUST5agO7UST1vU3t+vAQzaEF81I7JEj1KxN3Ykb/65gtkb+T6Or1pMOhH9+YOAf8EBR1ZbNqgXkZ7DelzrVPkpiP04XqdtJq9XByPxNnjn0ZkS8ywH+iSF78sitgDBc7b1ofjgwQXXWB0ohhJ1DxY5HPr9hZDjE1hR3iL/35bBGa4OZIXtdMhOTRv+BJXl4SGMqjVz3XSQal/GlmIRE1TvDwLzZ8D9t5ZcY0urAHXBAKSKUtTlZK6WdKFenh9k+odejbgjmiFBeIkzjnBjDP5WiXwydYFb5ToO1NOLvP6oAICwUgjtgx31ou2qRg=

@@ -15,6 +15,8 @@ before_install:
   - eval "${MATRIX_EVAL}"
 script:
 - cd src/
+- echo "${TRAVIS_REPO_SLUG}"
+- echo "${TRAVIS_PULL_REQUEST}"
 - make all
 - curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
   -d "{\"body\": \"Hello world\"}" \

@@ -39,7 +39,7 @@ static inline void writeToFlash(const uint16_t address, uint8_t *data,
 }
 
 static inline bool isCrcOk(const uint8_t i2c_address) {
-  bool status = false;
+  bool status = true;
   uint32_t crc = 0;
   uint16_t start_address = getDataStartAddressInSource(i2c_address);
   uint16_t length = getDataLength(i2c_address);

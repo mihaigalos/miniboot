@@ -14,13 +14,13 @@ matrix:
 before_install:
   - eval "${MATRIX_EVAL}"
 script:
-- cd src/
-- echo "${TRAVIS_REPO_SLUG}"
-- echo "${TRAVIS_PULL_REQUEST}"
-- make all
-- curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
-  -d "{\"body\": \"Hello world\"}" \
-  "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
+  - cd src/
+  - echo "${TRAVIS_REPO_SLUG}"
+  - echo "${TRAVIS_PULL_REQUEST}"
+  - make all
+  - curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
+    -d "{\"body\": \"Hello world\"}" \
+    "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
 
 env:
   global:

@@ -1,3 +1,5 @@
+# yamllint disable-line rule:line-length
+
 matrix:
   include:
   - os: linux

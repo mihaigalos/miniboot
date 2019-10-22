@@ -131,7 +131,7 @@ You will next be prompted to switch to binary mode and send the binary file.
 YAT tries to parse the \r\n sequence when sending, which leads to an error being shown and the transmission is interrupted, the file is not fully sent.
 To overcome this, ->select Terminal Type: binary. Select Binary Settings... and uncheck everything.
 
-Next select the exported binary file (`application.bin`) and click Send File.
+Next select the exported binary file (application.bin) and click Send File.
 
 You should now be able to send the file in full.
 

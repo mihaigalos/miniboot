@@ -8,6 +8,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
+            - gcc-avr
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 

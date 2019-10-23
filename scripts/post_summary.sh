@@ -3,9 +3,12 @@ set -x #echo on
 
 make_log=$1
 
-miniboot_elf=$(cat $make_log | grep -A 8 "miniboot.elf  :" | head -n 8)
+miniboot_elf=$(cat $make_log | grep -A 8 "miniboot.elf  :" | head -n 8 | tr -d '\n')
+add_bash_frame="```bash\n${miniboot}\n```"
+push_message="[CI Auto Message]\n${add_bash_frame}"
+
 
 curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
     -H "Content-Type: text; charset=utf-8" \
-    -d "{"body": "$miniboot_elf"}" \
+    -d "{"body": "${push_message}"}" \
     "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"

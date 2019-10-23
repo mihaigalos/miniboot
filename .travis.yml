@@ -18,10 +18,10 @@ before_install:
 
 script:
   - pushd src/
-  - make all
+  - make all | tee make_log.txt
   - popd
 after_success:
-  - ./scripts/post_summary.sh
+  - ./scripts/post_summary.sh make_log.txt
 
 env:
   global:

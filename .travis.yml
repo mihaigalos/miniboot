@@ -17,6 +17,7 @@ before_install:
   - eval "${MATRIX_EVAL}"
 
 script:
+  - echo "${TRAVIS_JOB_ID}"
   - pushd src/
   - make all | tee make_log.txt
   - popd

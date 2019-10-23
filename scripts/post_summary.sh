@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -x #echo on
 
 miniboot_elf=$(curl -s "https://api.travis-ci.org/jobs/${TRAVIS_JOB_ID}/log.txt?deansi=true" | grep -A 8 "miniboot.elf  :")
 

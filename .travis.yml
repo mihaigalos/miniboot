@@ -15,10 +15,12 @@ matrix:
       - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 before_install:
   - eval "${MATRIX_EVAL}"
+
 script:
   - pushd src/
   - make all
   - popd
+after_success:
   - ./scripts/post_summary.sh
 
 env:

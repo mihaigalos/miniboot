@@ -3,7 +3,7 @@ set -x #echo on
 
 make_log=$1
 
-push_message="[CI Auto Message]\n\`\`\`bash\n$(cat $make_log | grep -A 8 "miniboot.elf  :" | head -n 8 | sed -e ':a;N;$!ba;s/\n/\\n/g')\n\`\`\`"
+push_message="\`[CI Auto Message]\`\n---\n\`\`\`bash\n$(cat $make_log | grep -A 8 "miniboot.elf  :" | head -n 8 | sed -e ':a;N;$!ba;s/\n/\\n/g')\n\`\`\`"
 
 curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
     -d "{\"body\": \"${push_message}\"}" \

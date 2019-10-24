@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -x #echo on
 
+[[ -z "$TRAVIS_PULL_REQUEST" ]] && { echo "Change is not a PR, nowhere to push summary to. Exiting." ; exit 0; }
+
 make_log=$1
 
 header="\`CI Auto Message\`\n---\n"

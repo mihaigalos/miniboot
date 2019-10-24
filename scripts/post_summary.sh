@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -x #echo on
 
-[[ -z "$TRAVIS_PULL_REQUEST" ]] && { echo "Change is not a PR, nowhere to push summary to. Exiting." ; exit 0; }
+if [[ "${TRAVIS_PULL_REQUEST:-false}" = false ]]; then
+    echo "Change is not a PR, nowhere to push summary to. Exiting."
+    exit
+fi
 
 make_log=$1
 

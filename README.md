@@ -150,3 +150,4 @@ or [AvrFreaks](https://www.avrfreaks.net/sites/default/files/bootloader_faq.pdf)
 # License
 
 This software is freely available under the GNU GPL v3.0 aegis, please consult the LICENSE file for further information.
+

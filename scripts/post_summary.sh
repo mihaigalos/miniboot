@@ -14,6 +14,8 @@ footer=""
 
 printf -v push_message '\`%s\`\\n---\\n\`\`\`bash\\n%s\\n\`\`\`\\n%s' "$header" "$body" "$footer"
 
-curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
+curl --fail -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
     -d "{\"body\": \"${push_message}\"}" \
     "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
+
+exit $?

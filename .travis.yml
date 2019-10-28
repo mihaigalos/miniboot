@@ -20,8 +20,6 @@ script:
   - pushd src/
   - make all | tee make_log.txt
   - popd
-
-after_success:
   - ./scripts/post_summary.sh src/make_log.txt
 
 env:

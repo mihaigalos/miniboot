@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -x #echo on
 
+if [ -z "${GITHUB_TOKEN}" ];
+then
+    echo "GITHUB_TOKEN variable is not set. Exiting.";
+    exit 0
+fi
+
 if [[ "${TRAVIS_PULL_REQUEST:-false}" = false ]]; then
     echo "Change is not a PR, nowhere to push summary to. Exiting."
     exit

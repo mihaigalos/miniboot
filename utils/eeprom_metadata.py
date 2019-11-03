@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # By Michael Bartlett, https://github.com/bartlettmic
 """
@@ -13,66 +13,119 @@ format.
 
 from time import time
 from binascii import crc32, hexlify, unhexlify
-from sys import argv
 from os import stat
 
-if len(argv) < 2:
-    print("No binary file provided, dying...")
-    exit(1)
-    
-binary_file = argv[1]
+MINIBOOT_HEADER_PREAMBLE = "ABminiboot"
+DEFAULT_APP_NAME         = "APPNAME"
+DEFAULT_OUTPUT_FILE      = "output.eeprom"
 
-(mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime) = stat(binary_file)
-    
-# Header protocol:
-#  0-9   = miniboot header (ABminiboot)
-#  10-19 = sketch name (provided in arguments)
-#  20-23 = timestamp of sketch creation (creation time epoch)
-#  24-27 = timestamp of eeprom write (current timestamp epoch)
-#  28-31 = CRC32 (Checksum hex value)
-#  32-33 = Length (size of binary in Hex)
+def generate_miniboot_header(
+        binary_file,
+        application_name=DEFAULT_APP_NAME,
+        output_file=DEFAULT_OUTPUT_FILE,
+        print_header_result=False
+    ):
 
-with open(binary_file, 'rb') as binary:
-    payload = binary.read()
+    if not binary_file:
+        return ""
     
-    payload_size = len(payload)
-    payload_size_hex = hexlify(payload_size.to_bytes(2,'big'))
-    
-    crc = crc32(payload)
-    crc_hex = hexlify(crc.to_bytes(4, 'big'))
-    
-    header_string = "ABminiboot"
-    header_hex = hexlify(bytes(header_string, 'utf-8'))
-    
-    app_name = binary_file.ljust(10, ' ')[:10]
-    # app_name = "AUTOGEN".ljust(10, ' ')
-    app_hex = hexlify(bytes(app_name, 'utf-8'))
-
-    ctime_hex = hexlify(ctime.to_bytes(4,'big'))
-    
-    current_epoch = int(time())
-    epoch_hex = hexlify(current_epoch.to_bytes(4,'big'))
-
-    eeprom_metadata = header_hex + app_hex + ctime_hex + epoch_hex + crc_hex + payload_size_hex
-    # print("EEPROM header:", eeprom_metadata)
-    
-    eeprom_metadata = unhexlify(eeprom_metadata)
-    
-    eeprom_payload = eeprom_metadata + payload
-    
-    # for i in range(len(eeprom_metadata)):
-    #     print(i,":",hex(eeprom_metadata[i]))
+    (mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime) = stat(binary_file)
         
-    print("Miniboot header:   ", header_string)
-    print("Application name:  ", app_name)
-    print("Created timestamp: ", ctime)
-    print("Current timestamp: ", current_epoch)
-    print("CRC32:             ", crc)
-    print("Original binary size:", payload_size)
-    print("EEPROM payload size: ", len(eeprom_payload))
+    # Header protocol:
+    #  0-9   = miniboot header (ABminiboot)
+    #  10-19 = payload name (provided in arguments)
+    #  20-23 = timestamp of sketch creation (creation time epoch)
+    #  24-27 = timestamp of eeprom write (current timestamp epoch)
+    #  28-31 = CRC32 (Checksum hex value)
+    #  32-33 = Length (size of binary in Hex)
+
+    with open(binary_file, "rb") as binary:
+        payload = binary.read()
+        
+        payload_size = len(payload)
+        
+        # Truncase size to 2 bytes big-endian, i.e. uint16_t
+        payload_size_hex = hexlify(payload_size.to_bytes(2,"big"))
+        
+        crc = crc32(payload)
+        crc_hex = hexlify(crc.to_bytes(4, "big"))
+        
+        header_string = MINIBOOT_HEADER_PREAMBLE
+        header_hex = hexlify(bytes(header_string, "utf-8"))
+        
+        # App name string can only be 10 bytes long
+        app_name = str(application_name).ljust(10, " ")[:10]
+        app_hex = hexlify(bytes(app_name, "utf-8"))
+
+        # Unix epoch timestamp of payload"s creation time
+        ctime_hex = hexlify(ctime.to_bytes(4,"big"))
+        
+        current_epoch = int(time())
+        epoch_hex = hexlify(current_epoch.to_bytes(4,"big"))
+
+        eeprom_metadata = header_hex + app_hex + ctime_hex + epoch_hex + crc_hex + payload_size_hex
+        
+        eeprom_metadata = unhexlify(eeprom_metadata)
+        
+        eeprom_payload = eeprom_metadata + payload
+        
+        with open(output_file, "w+b") as firmware:
+            firmware.write(eeprom_payload)        
+        
+        if print_header_result:
+            print("Miniboot header:   ", header_string)
+            print("Application name:  ", app_name)
+            print("Created timestamp: ", ctime)
+            print("Current timestamp: ", current_epoch)
+            print("CRC32:             ", crc)
+            print("Original binary size:", payload_size)
+            print("EEPROM payload size: ", len(eeprom_payload))
+            print(f"{binary_file} -> {output_file}")
+            
+            
+            
+if __name__== "__main__":
+    import argparse
     
-    output_file = binary_file.replace('.bin','.eeprom')
-    with open(output_file, 'w+b') as firmware:
-        firmware.write(eeprom_payload)
-        print(f"\n-> \"{output_file}\"")
+    parser = argparse.ArgumentParser(description='Generate miniboot header from a compiled binary.')
+    parser.add_argument(
+            '-f',
+            '--file',
+            type=str,
+            help='path to binary file from which to generate a header',
+            required=True
+        )
     
+    parser.add_argument(
+            '-o',
+            '--output',
+            type=str,
+            help='output file path to write streamable header+binary payload bytes',
+            default=DEFAULT_OUTPUT_FILE,
+            required=False
+        )
+    
+    parser.add_argument(
+            '-a',
+            '--appname',
+            type=str,
+            help='string to bake into miniboot header as the applicaiton name (justified to exactly 10 chars)',
+            default=DEFAULT_APP_NAME,
+            required=False
+        )
+        
+    parser.add_argument(
+            '-v',
+            '--verbose',
+            action='store_true',
+            help='also print the generated header data in human-readable format',
+        )
+        
+    args = vars(parser.parse_args())
+    
+    binary_file         = args["file"]
+    application_name    = args['appname']
+    output_file         = args['output']
+    print_header_result = args['verbose']
+    
+    generate_miniboot_header(binary_file, application_name, output_file, print_header_result)

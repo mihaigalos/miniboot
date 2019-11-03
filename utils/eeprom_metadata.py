@@ -129,3 +129,4 @@ if __name__== "__main__":
     print_header_result = args['verbose']
     
     generate_miniboot_header(binary_file, application_name, output_file, print_header_result)
+    

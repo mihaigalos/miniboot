@@ -76,7 +76,7 @@ The variable EEPROM_CONFIGURATION_START_BYTE can be edited to generate the desir
 
 Export the hex file of the application (the one you want to transfer to the I2C memory) to binary before continuing:
 
-`avr-objcopy.exe -I ihex application.hex -O binary application.bin`
+`avr-objcopy -I ihex application.hex -O binary application.bin`
 
 ## Send it!
 

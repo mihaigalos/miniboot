@@ -103,7 +103,7 @@ metadata (i.e. : timestamp and CRC), the payload will be ignored by miniboot and
 Don't let the name scare you. :grinning:
 
 You can compose your metadata by hand, using my [eeprom](https://github.com/mihaigalos/Drivers/tree/master/Eeprom/src) driver, store both the metadata
-and the payload in the external I2C, for miniboot to use. Have a look at the `blink_hex` variable in [intel_hex.cpp](https://github.com/mihaigalos/Drivers/blob/master/Eeprom/src/intel_hex.cpp). You need to compile the example sketch and
+and the payload in the external I2C, for miniboot to use. Have a look at the `blink_hex` variable in [intel_hex.cpp](https://github.com/mihaigalos/Drivers/blob/1d91716ae377027199c316b348553ea9f591e0e6/Eeprom/src/intel_hex.cpp#L28). You need to compile the example sketch and
 flash the MCU with it. Once it runs successfuly, you will have the code in the external I2C EEPROM.
 
 ### The UART Method

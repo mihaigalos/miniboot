@@ -18,6 +18,12 @@ $ avr-size -B miniboot.elf
 
 # Usage
 
+## Flash the correct fuses
+
+Please use the following reccommended fuses, or compatible:
+
+https://github.com/mihaigalos/miniboot/blob/995c05d0aa989123e3cbfa012caa9d9c19f22886/src/miniboot.c#L2
+
 ## Get the sources
 
 `git clone --recursive  https://github.com/mihaigalos/miniboot.git`

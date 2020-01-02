@@ -156,9 +156,7 @@ def check_if_binary(check):
         return True, check
     elif file_ext == ".hex":
         if not dont_auto_convert:
-            # check=True is used to raise an exception if the command does not run successfully (doesn't exist, bad file, etc)
             subrun(['avr-objcopy', '-I', 'ihex', binary_file, '-O', 'binary', file_name+'.bin'], check=True)
-            # Return the new file's path
             return True, (file_name+'.bin')
         else:
             raise ValueError('Given file was .hex, but not allowed to convert')

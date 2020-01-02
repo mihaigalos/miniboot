@@ -2,18 +2,27 @@
 
 # By Michael Bartlett, https://github.com/bartlettmic
 """
-USAGE: Provide a compiled .bin file (can be generated
-with something like `avr-objcopy -I ihex $HEX_FILE -O binary
-$BIN_FILE`) and this will prepend the necessary miniboot-header
-bytes to a resulting .eeprom file which can be streamed directly
-into EEPROM to operate with miniboot. This will also nicely
-print out the generated data header data in human readable
-format.
+USAGE: Provide a compiled .bin file with -f
+(can be generated with something like
+avr-objcopy -I ihex $HEX_FILE -O binary $BIN_FILE )
+
+But providing a .hex will run that command for you,
+given that avr-objcopy is present on your device
+
+This will prepend the necessary miniboot-header
+bytes to a resulting .eeprom file which can be streamed
+directly into an external EEPROM without further changes
+to operate with miniboot.
+
+This can also nicely print out the generated header data 
+in human readable format.
 """
 
 from time import time
 from binascii import crc32, hexlify, unhexlify
 from os import stat
+from os.path import splitext
+from subprocess import run as subrun
 
 MINIBOOT_HEADER_PREAMBLE = "ABminiboot"
 DEFAULT_APP_NAME = "APPNAME"
@@ -123,6 +132,13 @@ def parserArguments():
         action='store_true',
         help='also print the generated header data in human-readable format',
     )
+    
+    parser.add_argument(
+        '-d',
+        '--dont_convert',
+        action='store_true',
+        help='don\'t convert a .hex to a .bin with avr-objcopy automatically',
+    )
     return parser
 
 
@@ -131,15 +147,34 @@ def getArguments():
     application_name = args['appname']
     output_file = args['output']
     print_header_result = args['verbose']
-    return binary_file, application_name, output_file, print_header_result
+    dont_auto_convert = args['dont_convert']
+    return binary_file, application_name, output_file, print_header_result, dont_auto_convert
 
+def check_if_binary(check):
+    file_name, file_ext = splitext(check)
+    if file_ext == ".bin":
+        return True, check
+    elif file_ext == ".hex":
+        if not dont_auto_convert:
+            # check=True is used to raise an exception if the command does not run successfully (doesn't exist, bad file, etc)
+            subrun(['avr-objcopy', '-I', 'ihex', binary_file, '-O', 'binary', file_name+'.bin'], check=True)
+            # Return the new file's path
+            return True, (file_name+'.bin')
+        else:
+            raise ValueError('Given file was .hex, but not allowed to convert')
+    else:
+        return False, check
 
 if __name__ == "__main__":
     parser = parserArguments()
 
     args = vars(parser.parse_args())
 
-    binary_file, application_name, output_file, print_header_result = getArguments()
+    binary_file, application_name, output_file, print_header_result, dont_auto_convert = getArguments()
+    
+    is_valid, new_filepath = check_if_binary(binary_file)
+    if not is_valid:
+        raise TypeError('Given file was not a .bin or a .hex')
 
     generate_miniboot_header(
-        binary_file, application_name, output_file, print_header_result)
+        new_filepath, application_name, output_file, print_header_result)

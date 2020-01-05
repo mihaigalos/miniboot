@@ -4,3 +4,6 @@
 [submodule "Drivers"]
 	path = src/Drivers
 	url = https://github.com/mihaigalos/Drivers.git
+[submodule "utils/3rdparty/esp32_eeprom_flasher"]
+	path = utils/3rdparty/esp32_eeprom_flasher
+	url = https://github.com/nullstalgia/esp32_eeprom_flasher

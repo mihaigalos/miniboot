@@ -68,10 +68,10 @@ static inline bool isCrcOk() {
       LED_TOGGLE();
   }
 
-  uint32_t expected_crc = static_cast<uint32_t>(getWordFromSource(application_crc_expected_index))
+  uint32_t expected_crc = static_cast<uint32_t>(getWordFromSource(application_crc_expected_offset))
                           << 16;
   expected_crc |= static_cast<uint32_t>(
-      getWordFromSource(application_crc_expected_index + 2));
+    getWordFromSource(application_crc_expected_offset + 2));
 
   if (crc == expected_crc) {
     status = true;

@@ -12,7 +12,7 @@
 
 #define LED_INIT()                                                             \
   LED_OFF();                                                                   \
-  OUTPORT(LED_PORT_NAME) = (1 << (LED_PIN))
+  OUTPORT(LED_PORT_NAME) |= (1 << (LED_PIN))
 
 #define RESET_VECTOR 0x0000
 #define RESET_VECTOR_ARGUMENT_ADDRESS 0x0002

@@ -5,6 +5,8 @@ BOOTLOADER_START_ADDRESS = "0x7800"
 
 EEPROM_CONFIGURATION_START_BYTE = "0x03F6"
 
+F_CPU = "8000000UL"
+
 config_setting(
     name = "avr",
     values = {
@@ -40,6 +42,7 @@ cc_binary(
         ":avr": [
             "-mmcu=$(MCU)",
             "-Wl,--section-start=.text=" + BOOTLOADER_START_ADDRESS,
+            "-DF_CPU=" + F_CPU,
             "-Os",
             "-std=gnu++14",
             "-fdiagnostics-color",

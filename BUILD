@@ -31,7 +31,7 @@ cc_library(
 )
 
 cc_binary(
-    name = "miniboot",
+    name = "miniboot.elf",
     srcs = glob([
         "src/*.cpp",
         "src/*.c",

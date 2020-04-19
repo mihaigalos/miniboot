@@ -31,12 +31,22 @@ https://github.com/mihaigalos/miniboot/blob/995c05d0aa989123e3cbfa012caa9d9c19f2
 If you've downloaded the sources manually, make sure to also manually download the dependencies (i.e. : I2C-master-lib), they are not automatically downloaded!
 
 ## Build the hex
+
+Thre are two way to build miniboot: using `make` and using `bazel`.
+
+#### Make
+
 `make rebuild`
 
 This will produce the miniboot.hex file you can then flash to your Arduino. The bootloader
 automatically starts on a reset and looks for an I2C device at address 0x50 (CAT24M01's default address).
 
-It then reads the metadata header and it starts reflashing the microcontroller with the information
+#### Bazel (elf generated, still experimental)
+
+`bazel build --config=328p --verbose_failures //:miniboot.elf` will produce an elf in `bazel-out/avr-fastbuild/bin/miniboot.elf`.
+
+## Once Miniboot starts
+Miniboot reads the metadata header and it starts reflashing the microcontroller with the information
 stated there. It expects the following memory layout of the metadata in the (external) I2C memory:
 
 - [last free byte pointer]          : 2 bytes - should point to first byte after the appplication. Ignored.

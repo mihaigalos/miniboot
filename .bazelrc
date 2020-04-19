@@ -1,0 +1,13 @@
+run --define COM=/dev/ttyUSB0
+run --define PROGR=arduino
+
+build:328p --crosstool_top=@avr_tools//tools/avr:toolchain_avr --distinct_host_configuration=false
+build:328p --cpu=avr
+build:328p --define MCU=atmega328p
+
+build:trinket --crosstool_top=@avr_tools//tools/avr:toolchain_avr --distinct_host_configuration=false
+build:trinket --cpu=avr
+build:trinket --define=MCU=attiny85
+
+
+test --test_output=all

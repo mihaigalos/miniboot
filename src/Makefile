@@ -14,8 +14,9 @@ FORMAT = ihex
 TARGET = miniboot
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c \
-		I2C-master-lib/i2c_master.c
+SRC = I2C-master-lib/i2c_master.c
+
+CPP_SRCS = $(TARGET).cpp
 
 # List Assembler source files here.
 # Make them always end in a capital .S.  Files ending in a lowercase .s
@@ -66,7 +67,6 @@ CFLAGS += $(CDEFS) $(CINCS)
 CFLAGS += -O$(OPTIMIZATIONS) -pedantic
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 CFLAGS += -Wall -Wstrict-prototypes -Werror
-CFLAGS += -Wa,-adhlns=$(<:.c=.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
 CFLAGS += -DF_CPU=$(F_CPU)
@@ -154,7 +154,7 @@ MSG_ASSEMBLING = Assembling:
 MSG_CLEANING = Cleaning project:
 
 # Define all object files.
-OBJ = $(SRC:.c=.o) $(ASRC:.S=.o)
+OBJ = $(SRC:.c=.o) $(CPP_SRCS:.cpp=.o) $(ASRC:.S=.o)
 
 # Define all listing files.
 LST = $(ASRC:.S=.lst) $(SRC:.c=.lst)
@@ -259,8 +259,18 @@ extcoff: $(TARGET).elf
 	@echo $(MSG_COMPILING) $<
 	$(CC) -c $(ALL_CFLAGS) $< -o $@
 
+# Compile: create object files from C source files.
+%.o : %.cpp
+	@echo
+	@echo $(MSG_COMPILING) $<
+	$(CC) -c $(ALL_CFLAGS) $< -o $@
+
 # Compile: create assembler files from C source files.
 %.s : %.c
+	$(CC) -S $(ALL_CFLAGS) $< -o $@
+
+# Compile: create assembler files from C source files.
+%.s : %.cpp
 	$(CC) -S $(ALL_CFLAGS) $< -o $@
 
 # Assemble: create object files from assembler source files.

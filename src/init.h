@@ -1,6 +1,6 @@
 #pragma once
 
-#include "I2C-master-lib/i2c_master.h"
+#include "i2c_master.h"
 #include "io.h"
 #include <avr/wdt.h>
 

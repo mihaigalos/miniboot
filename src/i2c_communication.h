@@ -1,6 +1,6 @@
 #pragma once
 
-#include "I2C-master-lib/i2c_master.h"
+#include "i2c_master.h"
 
 static inline uint8_t readByte(const uint8_t source_address,
                                const uint16_t register_address) {

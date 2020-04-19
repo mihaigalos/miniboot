@@ -16,9 +16,11 @@ genrule(
     name = "gen_bootloader_h",
     srcs = ["src/miniboot.cpp"],
     outs = ["copy_of_miniboot.h"],
-    cmd = "printf \"%s %s \n%s %s\" " +
-          "\"#define BOOTLOADER_START_ADDRESS \" \"" + BOOTLOADER_START_ADDRESS +
-          "\" \"#define EEPROM_CONFIGURATION_START_BYTE \" \"" + EEPROM_CONFIGURATION_START_BYTE + "\" >$@",
+    cmd = "printf \"%s\n%s %s\n%s %s\" " +
+          "\"#pragma once\" " +
+          "\"#define BOOTLOADER_START_ADDRESS \" \"" + BOOTLOADER_START_ADDRESS + "\" " +
+          "\"#define EEPROM_CONFIGURATION_START_BYTE \" \"" + EEPROM_CONFIGURATION_START_BYTE +
+          "\" >$@",
 )
 
 cc_library(

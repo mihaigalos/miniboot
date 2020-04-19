@@ -8,7 +8,7 @@ config_setting(
     },
 )
 
-BOOTLOADER_START_ADDRESS = 0x7800
+BOOTLOADER_START_ADDRESS = "0x7800"
 
 cc_binary(
     name = "miniboot",
@@ -21,6 +21,7 @@ cc_binary(
     copts = select({
         ":avr": [
             "-mmcu=$(MCU)",
+            "-Wl,--section-start=.text=" + BOOTLOADER_START_ADDRESS,
             "-Os",
             "-std=gnu++14",
             "-fdiagnostics-color",

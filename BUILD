@@ -1,6 +1,10 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 load("@avr_tools//tools/avr:hex.bzl", "hex")
 
+BOOTLOADER_START_ADDRESS = "0x7800"
+
+EEPROM_CONFIGURATION_START_BYTE = "0x03F6"
+
 config_setting(
     name = "avr",
     values = {
@@ -8,14 +12,10 @@ config_setting(
     },
 )
 
-BOOTLOADER_START_ADDRESS = "0x7800"
-
-EEPROM_CONFIGURATION_START_BYTE = "0x03F6"
-
 genrule(
     name = "gen_bootloader_h",
     srcs = ["src/miniboot.cpp"],
-    outs = ["copy_of_miniboot.h"],
+    outs = ["bootloader.h"],
     cmd = "printf \"%s\n%s %s\n%s %s\" " +
           "\"#pragma once\" " +
           "\"#define BOOTLOADER_START_ADDRESS \" \"" + BOOTLOADER_START_ADDRESS + "\" " +

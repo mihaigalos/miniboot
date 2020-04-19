@@ -1,4 +1,4 @@
-load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 load("@avr_tools//tools/avr:hex.bzl", "hex")
 
 config_setting(
@@ -9,6 +9,22 @@ config_setting(
 )
 
 BOOTLOADER_START_ADDRESS = "0x7800"
+
+EEPROM_CONFIGURATION_START_BYTE = "0x03F6"
+
+genrule(
+    name = "gen_bootloader_h",
+    srcs = ["src/miniboot.cpp"],
+    outs = ["copy_of_miniboot.h"],
+    cmd = "printf \"%s %s \n%s %s\" " +
+          "\"#define BOOTLOADER_START_ADDRESS \" \"" + BOOTLOADER_START_ADDRESS +
+          "\" \"#define EEPROM_CONFIGURATION_START_BYTE \" \"" + EEPROM_CONFIGURATION_START_BYTE + "\" >$@",
+)
+
+cc_library(
+    name = "bootloader_h",
+    srcs = [":gen_bootloader_h"],
+)
 
 cc_binary(
     name = "miniboot",
@@ -39,6 +55,7 @@ cc_binary(
         "//conditions:default": [],
     }),
     deps = [
+        ":bootloader_h",
         "@system_includes//:arduino",
     ],
 )

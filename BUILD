@@ -61,7 +61,6 @@ cc_binary(
     }),
     deps = [
         ":bootloader_h",
-        "@system_includes//:arduino",
     ],
 )
 

@@ -34,15 +34,3 @@ cc_library(
     path = "/lib/x86_64-linux-gnu/",
 )
 
-new_local_repository(
-    name = "system_includes",
-    build_file_content = """
-cc_library(
-    name = "arduino",
-    srcs = ["Arduino.h"],
-    visibility = ["//visibility:public"],
-)
-""",
-    # pkg-config --variable=libdir x11
-    path = "/opt/arduino-1.8.8/hardware/arduino/avr/cores/arduino",
-)

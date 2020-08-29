@@ -1,6 +1,3 @@
-[submodule "I2C-master-lib"]
-	path = src/I2C-master-lib
-	url = https://github.com/g4lvanix/I2C-master-lib.git
 [submodule "Drivers"]
 	path = src/Drivers
 	url = https://github.com/mihaigalos/Drivers.git

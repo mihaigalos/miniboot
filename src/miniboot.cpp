@@ -130,21 +130,21 @@ static inline void writeFlashFromI2C(const uint8_t i2c_address,
     ;
 }
 
-static inline bool isReflashNecessary(uint32_t &i2c_application_timestamp)
+static inline bool isReflashNecessary(uint32_t &application_timestamp)
 {
   uint32_t current_application_timestamp =
       readLatestApplicationTimestampFromInternalEeprom();
 
-  i2c_application_timestamp =
+  application_timestamp =
       static_cast<uint32_t>(getWordFromSource(
           source_i2c_address_for_program, timestamp_application_byte_offset))
       << 16;
-  i2c_application_timestamp |= static_cast<uint32_t>(getWordFromSource(
+  application_timestamp |= static_cast<uint32_t>(getWordFromSource(
       source_i2c_address_for_program, timestamp_application_byte_offset + 2));
 
   if (eeprom_not_programmed == current_application_timestamp)
     return true;
-  if (i2c_application_timestamp != current_application_timestamp)
+  if (application_timestamp != current_application_timestamp)
     return true;
   return false;
 }
@@ -154,15 +154,15 @@ int main()
 
   init();
 
-  uint32_t i2c_application_timestamp;
+  uint32_t application_timestamp;
   uint16_t application_start = 0;
 
-  if (isReflashNecessary(i2c_application_timestamp) &&
+  if (isReflashNecessary(application_timestamp) &&
       isCrcOk(source_i2c_address_for_program))
   {
     eraseApplication();
     writeFlashFromI2C(source_i2c_address_for_program, application_start);
-    writeLatestApplicationTimestampToInternalEeprom(i2c_application_timestamp);
+    writeLatestApplicationTimestampToInternalEeprom(application_timestamp);
   }
   else
   {

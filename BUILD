@@ -30,6 +30,16 @@ cc_library(
     srcs = [":gen_bootloader_h"],
 )
 
+DEFAULT_COMPILER_OPTIONS = [
+    "-mmcu=$(MCU)",
+    "-std=gnu++14",
+    "-fdiagnostics-color",
+    "-g -Os -pedantic -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -Wall -Wstrict-prototypes -Werror",
+    "-MD -MP",
+    "-Wl,-Map=miniboot.map,--cref",
+    "-lm -Wl,--relax,--gc-sections,-Map=miniboot.map -Wl,--section-start=.text=" + BOOTLOADER_START_ADDRESS,
+]
+
 cc_binary(
     name = "miniboot.elf",
     srcs = glob([
@@ -40,31 +50,15 @@ cc_binary(
     ]),
     copts = select({
         ":avr": [
-            "-mmcu=$(MCU)",
             "-DF_CPU=" + F_CPU,
-            "-Os",
-            "-std=gnu++14",
-            "-fdiagnostics-color",
-            "-g   -Os -pedantic -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -Wall -Wstrict-prototypes -Werror",
-            "-MD -MP",
-            "-Wl,-Map=miniboot.map,--cref",
-            "-lm -Wl,--relax,--gc-sections,-Map=miniboot.map -Wl,--section-start=.text=0x7800",
-        ],
+        ] + DEFAULT_COMPILER_OPTIONS,
         "//conditions:default": [],
     }),
     includes = [
         "src",
     ],
     linkopts = select({
-        ":avr": [
-            "-mmcu=$(MCU)",
-            "-std=gnu++14",
-            #"-Wl,--section-start=.text=" + BOOTLOADER_START_ADDRESS,
-            "-g   -Os -pedantic -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -Wall -Wstrict-prototypes -Werror",
-            "-MD -MP",
-            "-Wl,-Map=miniboot.map,--cref",
-            "-lm -Wl,--relax,--gc-sections,-Map=miniboot.map -Wl,--section-start=.text=0x7800",
-        ],
+        ":avr": DEFAULT_COMPILER_OPTIONS,
         "//conditions:default": [],
     }),
     deps = [

@@ -41,11 +41,14 @@ cc_binary(
     copts = select({
         ":avr": [
             "-mmcu=$(MCU)",
-            "-Wl,--section-start=.text=" + BOOTLOADER_START_ADDRESS,
             "-DF_CPU=" + F_CPU,
             "-Os",
             "-std=gnu++14",
             "-fdiagnostics-color",
+            "-g   -Os -pedantic -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -Wall -Wstrict-prototypes -Werror",
+            "-MD -MP",
+            "-Wl,-Map=miniboot.map,--cref",
+            "-lm -Wl,--relax,--gc-sections,-Map=miniboot.map -Wl,--section-start=.text=0x7800",
         ],
         "//conditions:default": [],
     }),
@@ -56,6 +59,11 @@ cc_binary(
         ":avr": [
             "-mmcu=$(MCU)",
             "-std=gnu++14",
+            #"-Wl,--section-start=.text=" + BOOTLOADER_START_ADDRESS,
+            "-g   -Os -pedantic -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -Wall -Wstrict-prototypes -Werror",
+            "-MD -MP",
+            "-Wl,-Map=miniboot.map,--cref",
+            "-lm -Wl,--relax,--gc-sections,-Map=miniboot.map -Wl,--section-start=.text=0x7800",
         ],
         "//conditions:default": [],
     }),

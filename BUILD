@@ -38,7 +38,6 @@ DEFAULT_COMPILER_OPTIONS = [
     "-funsigned-char",
     "-g",
     "-lm -Wl,--relax,--gc-sections,-Map=miniboot.map -Wl,--section-start=.text=" + BOOTLOADER_START_ADDRESS,
-    "-MD -MP",
     "-mmcu=$(MCU)",
     "-Os",
     "-pedantic",
@@ -46,7 +45,6 @@ DEFAULT_COMPILER_OPTIONS = [
     "-Wall",
     "-Werror",
     "-Wl,-Map=miniboot.map,--cref",
-    "-Wstrict-prototypes",
 ]
 
 cc_binary(

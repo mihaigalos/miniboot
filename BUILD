@@ -31,13 +31,22 @@ cc_library(
 )
 
 DEFAULT_COMPILER_OPTIONS = [
-    "-mmcu=$(MCU)",
-    "-std=gnu++14",
     "-fdiagnostics-color",
-    "-g -Os -pedantic -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -Wall -Wstrict-prototypes -Werror",
-    "-MD -MP",
-    "-Wl,-Map=miniboot.map,--cref",
+    "-fpack-struct",
+    "-fshort-enums",
+    "-funsigned-bitfields",
+    "-funsigned-char",
+    "-g",
     "-lm -Wl,--relax,--gc-sections,-Map=miniboot.map -Wl,--section-start=.text=" + BOOTLOADER_START_ADDRESS,
+    "-MD -MP",
+    "-mmcu=$(MCU)",
+    "-Os",
+    "-pedantic",
+    "-std=gnu++14",
+    "-Wall",
+    "-Werror",
+    "-Wl,-Map=miniboot.map,--cref",
+    "-Wstrict-prototypes",
 ]
 
 cc_binary(

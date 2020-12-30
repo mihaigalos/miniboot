@@ -6,7 +6,8 @@
 
 static inline void initIO() { LED_INIT(); }
 
-static inline void disableWatchdog() {
+static inline void disableWatchdog()
+{
   wdt_reset();
   MCUSR = 0;
   WDTCSR |= (1 << WDCE) | (1 << WDE);
@@ -14,7 +15,8 @@ static inline void disableWatchdog() {
   asm("cli");
 }
 
-static inline void init() {
+static inline void init()
+{
   disableWatchdog();
   i2c_init();
   initIO();

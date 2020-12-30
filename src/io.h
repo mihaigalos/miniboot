@@ -10,8 +10,8 @@
 #define LED_OFF() LED_PORT(LED_PORT_NAME) |= (1 << (LED_PIN))
 #define LED_TOGGLE() LED_PORT(LED_PORT_NAME) ^= (1 << (LED_PIN))
 
-#define LED_INIT()                                                             \
-  LED_OFF();                                                                   \
+#define LED_INIT() \
+  LED_OFF();       \
   OUTPORT(LED_PORT_NAME) = (1 << (LED_PIN))
 
 #define RESET_VECTOR 0x0000

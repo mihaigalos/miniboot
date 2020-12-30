@@ -59,7 +59,7 @@ stated there. It expects the following memory layout of the metadata in the (ext
 - [timestamp of write]              : 4 bytes - unix timestamp when the application was flashed to the I2c memory.
 - [CRC32]                           : 4 bytes - generated with polynomial representation 0xEDB88320. Details in Drivers/CRC.
 - [length]                          : 2 bytes - amount of bytes for the application.
-- [application]                     : n bytes - actual payload of the application code.
+- [application]                     : *length* bytes - actual payload of the application code.
 
 Miniboot computes a CRC32 checksum on the payload, excluding the header metadata and starting with the first byte of
 the application.

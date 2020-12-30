@@ -1,5 +1,5 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
-load("@avr_tools//tools/avr:hex.bzl", "hex")
+load("@avr_tools//tools/avr:hex.bzl", "eeprom", "hex", "listing")
 
 BOOTLOADER_START_ADDRESS = "0x7800"
 
@@ -30,6 +30,23 @@ cc_library(
     srcs = [":gen_bootloader_h"],
 )
 
+DEFAULT_COMPILER_OPTIONS = [
+    "-fdiagnostics-color",
+    "-fpack-struct",
+    "-fshort-enums",
+    "-funsigned-bitfields",
+    "-funsigned-char",
+    "-g",
+    "-lm -Wl,--relax,--gc-sections,-Map=miniboot.map -Wl,--section-start=.text=" + BOOTLOADER_START_ADDRESS,
+    "-mmcu=$(MCU)",
+    "-Os",
+    "-pedantic",
+    "-std=gnu++14",
+    "-Wall",
+    "-Werror",
+    "-Wl,-Map=miniboot.map,--cref",
+]
+
 cc_binary(
     name = "miniboot.elf",
     srcs = glob([
@@ -40,23 +57,15 @@ cc_binary(
     ]),
     copts = select({
         ":avr": [
-            "-mmcu=$(MCU)",
-            "-Wl,--section-start=.text=" + BOOTLOADER_START_ADDRESS,
             "-DF_CPU=" + F_CPU,
-            "-Os",
-            "-std=gnu++14",
-            "-fdiagnostics-color",
-        ],
+        ] + DEFAULT_COMPILER_OPTIONS,
         "//conditions:default": [],
     }),
     includes = [
         "src",
     ],
     linkopts = select({
-        ":avr": [
-            "-mmcu=$(MCU)",
-            "-std=gnu++14",
-        ],
+        ":avr": DEFAULT_COMPILER_OPTIONS,
         "//conditions:default": [],
     }),
     deps = [
@@ -66,10 +75,15 @@ cc_binary(
 
 hex(
     name = "miniboot_hex",
-    src = ":miniboot_sources",
+    src = ":miniboot.elf",
 )
 
-#   listing(
-#       name = "arduino_cli_mcu_listing",
-#       src = ":arduino_cli_mcu",
-#   )
+eeprom(
+    name = "miniboot_eeprom",
+    src = ":miniboot.elf",
+)
+
+listing(
+    name = "miniboot_listing",
+    src = ":miniboot.elf",
+)

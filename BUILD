@@ -28,6 +28,7 @@ genrule(
 cc_library(
     name = "bootloader_h",
     srcs = [":gen_bootloader_h"],
+    linkstatic=1,
 )
 
 DEFAULT_COMPILER_OPTIONS = [

@@ -43,9 +43,10 @@ Thre are two way to build miniboot: using `make` and using `bazel`.
 This will produce the miniboot.hex file you can then flash to your Arduino. The bootloader
 automatically starts on a reset and looks for an I2C device at address 0x50 (CAT24M01's default address).
 
-#### Bazel (elf generated, still experimental)
+#### Bazel
 
-`bazel build --config=328p --verbose_failures //:miniboot.elf` will produce an elf in `bazel-out/avr-fastbuild/bin/miniboot.elf`.
+* `bazel build --config=328p --verbose_failures //:miniboot.elf`
+* `bazel build --config=328p --verbose_failures //:miniboot_hex`
 
 ## Once Miniboot starts
 Miniboot reads the metadata header and it starts reflashing the microcontroller with the information

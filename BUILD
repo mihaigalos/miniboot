@@ -1,5 +1,5 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
-load("@avr_tools//tools/avr:hex.bzl", "hex")
+load("@avr_tools//tools/avr:hex.bzl", "eeprom", "hex", "listing")
 
 BOOTLOADER_START_ADDRESS = "0x7800"
 
@@ -75,10 +75,15 @@ cc_binary(
 
 hex(
     name = "miniboot_hex",
-    src = ":miniboot_sources",
+    src = ":miniboot.elf",
 )
 
-#   listing(
-#       name = "arduino_cli_mcu_listing",
-#       src = ":arduino_cli_mcu",
-#   )
+eeprom(
+    name = "miniboot_eeprom",
+    src = ":miniboot.elf",
+)
+
+listing(
+    name = "miniboot_listing",
+    src = ":miniboot.elf",
+)

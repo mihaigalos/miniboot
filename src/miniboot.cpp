@@ -2,7 +2,9 @@
 //  Fuses :     Ext: 0xFF, Hi: 0xD8, Lo: 0xE2
 //
 
-#include "Drivers/CRC/crc32.h"
+#include "config.h"
+
+#include "avr-bootloader-common/crc32.h"
 #include "avr-bootloader-common/eeprom.h"
 #include "avr-bootloader-common/flash.h"
 

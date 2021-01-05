@@ -9,7 +9,7 @@ CAT24M01 1Mbit (128kByte) external EEPROM was used.
 
 # Requirements
 
-Miniboot depends on [I2C-master-lib](https://github.com/g4lvanix/I2C-master-lib/) for I2C communication and [Drivers](https://github.com/mihaigalos/Drivers/) for CRC32 computation and EEPROM access.
+Miniboot depends on [avr-bootloader-common](https://github.com/mihaigalos/avr-bootloader-common/) for commonalities between bootloaders, [I2C-master-lib](https://github.com/g4lvanix/I2C-master-lib/) for I2C communication and [Drivers](https://github.com/mihaigalos/Drivers/) for CRC32 computation and EEPROM access.
 
 Flash size requirements are <2kBytes. With respect to RAM, AtMega328p's 2kBytes should be enough, actual stack usage is way lower than that anyway.
 ```

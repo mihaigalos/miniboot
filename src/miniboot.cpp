@@ -3,9 +3,10 @@
 //
 
 #include "Drivers/CRC/crc32.h"
+#include "avr-bootloader-common/eeprom.h"
+#include "avr-bootloader-common/flash.h"
+
 #include "bootloader.h"
-#include "eeprom.h"
-#include "flash.h"
 #include "i2c_communication.h"
 #include "init.h"
 

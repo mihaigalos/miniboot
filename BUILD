@@ -54,7 +54,6 @@ cc_binary(
         "src/*.cpp",
         "src/*.c",
         "src/*.h",
-        "src/Drivers/CRC/*.h",
         "src/avr-bootloader-common/*.h",
     ]),
     copts = select({

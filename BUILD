@@ -71,6 +71,7 @@ cc_binary(
     }),
     deps = [
         ":bootloader_h",
+        "@avr-bootloader-common",
     ],
 )
 

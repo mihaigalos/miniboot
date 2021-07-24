@@ -16,6 +16,13 @@ git_repository(
 )
 
 git_repository(
+    name = "avr-bootloader-common",
+    commit = "b9a639de3f4a731a5044026fd1093c8d25971685",
+    remote = "https://github.com/mihaigalos/avr-bootloader-common",
+    shallow_since = "1611476679 +0100",
+)
+
+git_repository(
     name = "avr_tools",
     commit = "997c1096f95a12385addc9ecce7a6aae33ae933b",
     remote = "https://github.com/mihaigalos/bazel-avr-tools",

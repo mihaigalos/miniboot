@@ -1,10 +1,3 @@
 [submodule "utils/3rdparty/esp32_eeprom_flasher"]
 	path = utils/3rdparty/esp32_eeprom_flasher
 	url = https://github.com/nullstalgia/esp32_eeprom_flasher
-[submodule "src/avr-bootloader-common"]
-	path = src/avr-bootloader-common
-	url = https://github.com/mihaigalos/avr-bootloader-common.git
-    branch = main
-    # using commit e88723e071d2f198daab7e1fcbe6db6176d9cc97 from  mihaigalos/avr-bootloader-common
-    # subsequent commits contain a bazel BUILD and WORKSPACE file which break bazel compilation
-    # on miniboot and require submodules be modeled at bazel level instead of git submodule level.

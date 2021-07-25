@@ -23,6 +23,12 @@ jobs:
           sudo dpkg -i bazel_3.4.1-linux-x86_64.deb
           sudo apt install lcov
           sudo apt install pkg-config
+
       - name: Build and Test
         run: |
-          bazel build --config=328p --verbose_failures //:miniboot_hex
+          bazel build --config=328p --verbose_failures //:miniboot_hex | tee build_log.txt
+
+      - name: Post summary to PR
+        run: |
+          stat build_log.txt
+          ./scripts/post_summary.sh build_log.txt

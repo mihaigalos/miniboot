@@ -1,27 +1,27 @@
-#!/usr/bin/env bash
-set -x #echo on
+#!/bin/bash
 
-if [ -z "${GITHUB_TOKEN}" ];
-then
-    echo "GITHUB_TOKEN variable is not set. Exiting.";
-    exit 0
-fi
+set -x
 
-if [[ "${TRAVIS_PULL_REQUEST:-false}" = false ]]; then
-    echo "Change is not a PR, nowhere to push summary to. Exiting."
-    exit
-fi
+function fail {
+    printf '%s\n' "$1" >&2 
+    exit "${2-1}"  ## Return a code specified by $2 or 1 by default.
+}
 
-make_log=$1
+[ -n "${TOKEN}" ] && fail "TOKEN variable is not set. Exiting."
+
+build_log=$1
 
 header="CI Auto Message"
-body="$(cat $make_log | grep -A 8 "miniboot.elf  :" | head -n 8 | sed -e ':a;N;$!ba;s/\n/\\n/g')"
+body="$(cat $build_log | grep -A 5 "Program: " | head -n 5 | sed -e ':a;N;$!ba;s/\n/\\n/g')"
 footer=""
+PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
 
-printf -v push_message '`%s`\\n---\\n```bash\\n%s\\n```\\n%s' "$header" "$body" "$footer"
+echo $PR_NUMBER
+#
+#   printf -v push_message '`%s`\\n---\\n```bash\\n%s\\n```\\n%s' "$header" "$body" "$footer"
 
-curl --fail -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
-    -d "{\"body\": \"${push_message}\"}" \
-    "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
+#curl --fail -H "Authorization: token ${TOKEN}" -X POST \
+#    -d "{\"body\": \"${push_message}\"}" \
+#    "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${TRAVIS_PULL_REQUEST}/comments"
 
 exit $?

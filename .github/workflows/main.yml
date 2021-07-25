@@ -30,5 +30,5 @@ jobs:
 
       - name: Post summary to PR
         run: |
-          stat build_log.txt
-          ./scripts/post_summary.sh build_log.txt
+          POST_SUMMARY_TOKEN=${{ secrets.POST_SUMMARY_TOKEN }}
+          ./scripts/post_summary.sh build_log.txt $POST_SUMMARY_TOKEN

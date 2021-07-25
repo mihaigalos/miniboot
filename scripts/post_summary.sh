@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 function my_exit {
     printf '%s\n' "$1" >&2 
     exit "${2-1}"  ## Return a code specified by $2 or 1 by default.

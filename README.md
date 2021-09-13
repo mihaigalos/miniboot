@@ -1,6 +1,6 @@
 # Miniboot - an I2C bootloader for Arduino
 
-[![CI](https://github.com/mihaigalos/miniboot/actions/workflows/main.yml/badge.svg)](https://github.com/mihaigalos/miniboot/actions/workflows/main.yml) [![license](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)](LICENSE) [![HitCount](http://hits.dwyl.com/mihaigalos/miniboot.svg)](http://hits.dwyl.com/mihaigalos/miniboot) [![LoC](https://tokei.rs/b1/github/mihaigalos/miniboot)](https://github.com/Aaronepower/tokei)
+[![CI](https://github.com/mihaigalos/miniboot/actions/workflows/main.yml/badge.svg)](https://github.com/mihaigalos/miniboot/actions/workflows/main.yml) [![license](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)](LICENSE) [![LoC](https://tokei.rs/b1/github/mihaigalos/miniboot)](https://github.com/Aaronepower/tokei)
 
 Miniboot started out as a weekend project early in 2018.
 It is an I2C bootloader for Arduino, tested on AtMega328p. It is designed to reflash

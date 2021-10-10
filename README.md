@@ -64,10 +64,10 @@ the bootloader section (Hi fuse : 0xD8). If you choose to modify miniboot, pleas
 fits in the section you specify with the Hi fuse.
 
 Computing the hexadecimal address for bootloader start section:
-- bazel clean; bazel build --config=328p --verbose_failures //:miniboot_hex ; take output, let's say it's 2123 (or similar)
-- for the size of your device (32kB = 1024 * 32 = 32768 bytes) minus above value 2123... = 30645
-- Which yields 30645 / 128 (128 = mega328p page size in bytes) = 239.41 pages of flash memory
-- round it down to 239 - our new bootloader address is 239 * 128 = 30592, in hex = 7780h
+- bazel clean; bazel build --config=328p --verbose_failures //:miniboot_hex ; take output, let's say it's 2123 (or similar).
+- for the size of your device (32kB = 1024 * 32 = 32768 bytes) minus above value 2123... = 30645.
+- Which yields 30645 / 128 (128 = mega328p page size in bytes) = 239.41 pages of flash memory.
+- round it down to 239 - our new bootloader address is 239 * 128 = 30592, in hex = 7780h.
 - put the value in the BOOTLOADER_START_ADDRESS variable in the BUILD file.
 
 # Internal EEPROM last application timestamp

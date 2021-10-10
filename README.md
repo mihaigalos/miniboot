@@ -10,6 +10,7 @@ CAT24M01 1Mbit (128kByte) external EEPROM was used.
 # Requirements
 
 Miniboot depends on [avr-bootloader-common](https://github.com/mihaigalos/avr-bootloader-common/) for commonalities between bootloaders.
+This dependency will be automatically downloaded by `bazel` so you don't have to.
 
 Flash size requirements are <2kBytes. With respect to RAM, AtMega328p's 2kBytes should be enough, actual stack usage is way lower than that anyway.
 ```
@@ -34,16 +35,7 @@ If you've downloaded the sources manually, make sure to also manually download t
 
 ## Build the hex
 
-Thre are two way to build miniboot: using `make` and using `bazel`.
-
-#### Make
-
-`make rebuild`
-
-This will produce the miniboot.hex file you can then flash to your Arduino. The bootloader
-automatically starts on a reset and looks for an I2C device at address 0x50 (CAT24M01's default address).
-
-#### Bazel
+Building is managed by [`bazel`](https://github.com/bazelbuild/bazel/releases), so make sure you have it first.
 
 * `bazel build --config=328p --verbose_failures //:miniboot.elf`
 * `bazel build --config=328p --verbose_failures //:miniboot_hex`

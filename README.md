@@ -31,8 +31,6 @@ https://github.com/mihaigalos/miniboot/blob/995c05d0aa989123e3cbfa012caa9d9c19f2
 
 `git clone --recursive  https://github.com/mihaigalos/miniboot.git`
 
-If you've downloaded the sources manually, make sure to also manually download the dependencies, they are not automatically downloaded!
-
 ## Build the hex
 
 Building is managed by [`bazel`](https://github.com/bazelbuild/bazel/releases), so make sure you have it first.
